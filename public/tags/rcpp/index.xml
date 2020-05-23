@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rcpp on Statistical Computing 2 Portfolio</title>
+    <link>/tags/rcpp/</link>
+    <description>Recent content in rcpp on Statistical Computing 2 Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 23 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/rcpp/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Introduction to Rcpp</title>
+      <link>/post/introduction-to-rcpp/</link>
+      <pubDate>Sat, 23 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/introduction-to-rcpp/</guid>
+      <description> Hellos 1+1 ## [1] 2 plot(1:10,1:10)  </description>
+    </item>
+    
+  </channel>
+</rss>

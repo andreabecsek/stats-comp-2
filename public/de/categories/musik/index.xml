@@ -20,15 +20,5 @@
 Die meisten seiner Songs haben einen politischen Hintergrund und geniale Texte!&lt;/p&gt;</description>
     </item>
     
-    <item>
-      <title>Kilez More - New World Order</title>
-      <link>/de/audio/kilez-more-new-world-order/</link>
-      <pubDate>Wed, 01 Nov 2017 16:12:47 +0100</pubDate>
-      
-      <guid>/de/audio/kilez-more-new-world-order/</guid>
-      <description>Mit dem audio Post Type kann sehr einfach ein Spotify, SoundCloud, TuneIn oder Mixcloud Player integriert werden.
-Falls kein Player integriert werden soll, kann optional ein Titelbild mit Hilfe der featuredImage Option in der Markdown Datei verwendet werden.</description>
-    </item>
-    
   </channel>
 </rss>

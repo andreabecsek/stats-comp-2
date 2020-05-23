@@ -1,0 +1,346 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Andrea Becsek">
+    <meta name="description" content="Portfolio for Statistical Computing 2.">
+    <meta name="keywords" content="">
+    <meta name="generator" content="Hugo 0.71.0" />
+    <title> Hello R Markdown | Statistical Computing 2 Portfolio</title>
+    <meta name="description" content="Hello R Markdown - Portfolio for Statistical Computing 2.">
+    <meta itemprop="name" content="Hello R Markdown">
+    <meta itemprop="description" content="Hello R Markdown - Portfolio for Statistical Computing 2.">
+    <meta property="og:title" content="Hello R Markdown">
+    <meta property="og:description" content="Hello R Markdown - Portfolio for Statistical Computing 2.">
+    <meta property="og:image" content="https://www.gravatar.com/avatar/88188b6cc451928eba90e8400bc68086?size=200">
+    <meta property="og:url" content="/post/2015-07-23-r-rmarkdown/">
+    <meta property="og:site_name" content="Statistical Computing 2 Portfolio">
+    <meta property="og:type" content="article">
+
+    
+
+
+    
+    <link href="/post/2015-07-23-r-rmarkdown/" rel="alternate" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    <link href="/post/2015-07-23-r-rmarkdown/" rel="feed" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    
+
+    
+
+    <link rel="stylesheet" href="/theme.css">
+
+    
+
+    
+    
+    
+</head>
+
+<body class="bilberry-hugo-theme">
+
+    
+    <nav>
+
+    <div class="container">
+        <ul class="topnav">
+            
+            
+            <li><a href="/page/about-bilberry/">About Bilberry</a></li>
+            
+            
+            
+            <li><a href="https://github.com/Lednerb/bilberry-hugo-theme" target="_blank">Github</a></li>
+            
+            
+        </ul>
+
+        
+        <div id="search-box" class="search">
+            <i class="fas fa-search"></i>
+            <input id="search" type="text" placeholder="Search ...">
+        </div>
+        
+    </div>
+</nav>
+
+
+    
+<header>
+
+    <div class="container">
+        <div class="logo">
+            <a id="siteBaseUrl" href="/" class="logo">
+                
+                <img src="https://www.gravatar.com/avatar/88188b6cc451928eba90e8400bc68086?d=mm&size=200" alt="">
+                
+
+                <span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title"><a
+                    href="/">Statistical Computing 2 Portfolio</a></h3>
+            
+            <span class="subtitle">Andrea Becsek</span>
+            
+        </div>
+
+        
+
+        
+            <div class="toggler">
+                
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+        </div>
+</header>
+
+
+    <div class="main container">
+        
+     
+    <div class="article-wrapper u-cf single">
+        
+            <a class="bubble" href="/post/2015-07-23-r-rmarkdown/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article">
+    
+
+    <div class="content">
+    <h1 class="article-title"><a href="/post/2015-07-23-r-rmarkdown/">Hello R Markdown</a></h1>
+    <div class="meta">
+        
+        
+        <span class="date moment">2015-07-23</span>
+        
+        
+
+        
+
+        
+        <span class="categories">
+            
+                
+                
+                <a href="/categories/r/">R</a>
+                
+            
+        </span>
+        
+
+        
+        <span class="author">
+            
+            
+            <a href="/author/frida-gomam/">Frida Gomam</a>
+            
+        </span>
+        
+    </div>
+
+    
+    
+
+
+<div id="r-markdown" class="section level1">
+<h1>R Markdown</h1>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>You can embed an R code chunk like this:</p>
+<pre class="r"><code>summary(cars)
+##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00
+fit &lt;- lm(dist ~ speed, data = cars)
+fit
+## 
+## Call:
+## lm(formula = dist ~ speed, data = cars)
+## 
+## Coefficients:
+## (Intercept)        speed  
+##     -17.579        3.932</code></pre>
+</div>
+<div id="including-plots" class="section level1">
+<h1>Including Plots</h1>
+<p>You can also embed plots. See Figure <a href="#fig:pie">1</a> for example:</p>
+<pre class="r"><code>par(mar = c(0, 1, 0, 1))
+pie(
+  c(280, 60, 20),
+  c(&#39;Sky&#39;, &#39;Sunny side of pyramid&#39;, &#39;Shady side of pyramid&#39;),
+  col = c(&#39;#0292D8&#39;, &#39;#F7EA39&#39;, &#39;#C4B632&#39;),
+  init.angle = -50, border = NA
+)</code></pre>
+<div class="figure"><span id="fig:pie"></span>
+<img src="/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png" alt="A fancy pie chart." width="672" />
+<p class="caption">
+Figure 1: A fancy pie chart.
+</p>
+</div>
+</div>
+
+    
+</div>
+
+    
+<div class="footer">
+
+
+    
+        <div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links">
+                
+                    
+                    
+                    <a href="/tags/r-markdown/">R Markdown</a>
+                    
+                
+                    
+                    
+                    <a href="/tags/plot/">plot</a>
+                    
+                
+                    
+                    
+                    <a href="/tags/regression/">regression</a>
+                    
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+</article>
+
+        
+    </div>
+
+    
+        <div id="comments-container">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "bilberry-hugo-theme" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            
+
+        </div>
+    
+
+     
+
+    </div>
+
+    
+<footer>
+    <div class="container">
+
+        
+
+        
+        <div class="categories">
+            <a href="/categories/"><strong>Categories</strong></a>
+            <ul>
+                
+                <li>
+                    <a href="/categories/music">Music
+                        (2)</a>
+                </li>
+                
+                <li>
+                    <a href="/categories/privacy">Privacy
+                        (2)</a>
+                </li>
+                
+                <li>
+                    <a href="/categories/code">Code
+                        (1)</a>
+                </li>
+                
+            </ul>
+        </div>
+        
+
+        <div class="right">
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+
+<div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/Lednerb" target="_blank">
+                &copy;
+                
+                2017
+                
+                by Lednerb
+            </a>
+            
+        </div>
+        <div class="author">
+            <a href="https://github.com/Lednerb/bilberry-hugo-theme"
+                target="_blank">Bilberry Hugo Theme</a>
+        </div>
+    </div>
+</div>
+
+
+    
+
+    
+
+
+    <script type="text/javascript" src="/theme.js"></script>
+
+    
+    
+    
+
+    
+    <div id="activate-algolia-search" class="hidden">
+  <input type="hidden" id="algolia-search-appId" value="Y2C4RWMPXW">
+  <input type="hidden" id="algolia-search-apiKey" value="50ea7f8c41c0ad233926e0be2b769ed1">
+  <input type="hidden" id="algolia-search-indexName" value="default-content">
+  <input type="hidden" id="algolia-search-noSearchResults" value="Nothing found.">
+
+  
+  <input type="hidden" id="algolia-search-currentLanguageOnly">
+  
+</div>
+
+    
+
+
+</body>
+
+</html>

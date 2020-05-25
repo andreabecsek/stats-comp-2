@@ -1,0 +1,372 @@
+---
+title: Intro to C++
+author: Andrea Becsek
+date: '2020-05-25'
+slug: intro-to-c
+categories: []
+tags: []
+---
+
+
+
+<p>C++ is a statically typed, compiled language, and it can be used across multiple platforms. Moreover, C++ is a great programming language for high-performance computing as it provides the user with much control over memory and system resources. It is also great for object-oriented programming and therefore it is used for a wide range of applications.</p>
+<div id="creating-a-c-program-and-some-basic-syntax" class="section level3">
+<h3>Creating a C++ program and some basic syntax</h3>
+<ol style="list-style-type: decimal">
+<li>Write your code using a text editor and save as <code>filename.cpp</code>.</li>
+<li>To compile the file from the terminal use <code>g++ filename.cpp -o filename</code>.</li>
+<li>The executable program can now be called from within the saved directory using <code>./filename</code>.</li>
+</ol>
+<p>Let’s examine a basic piece of code that prints “Hello World!”.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+using namespace std;
+
+// MAIN FUNCTION
+int main() {
+  cout &lt;&lt; &quot;Hello World!&quot;;
+  return 0;
+} </code></pre>
+<ul>
+<li><code>#include &lt;iostream&gt;</code> is a header file library which adds additional functionality to C++ programs. In this case we use it for <code>std::cout</code> which outputs objects, such as text, to the screen.</li>
+<li><code>using namespace std</code> allows us to use object and variable names from the standard library.</li>
+<li>Note that every statement must end with <code>;</code>.</li>
+<li>The <code>main</code> function is the function that is executed when the program is executed. The type of the output must also be specified, which in this case is <code>int</code>, an integer.</li>
+<li>The <code>cout</code> function together with the <code>&lt;&lt;</code> operator simply outputs the text “Hello World!”.</li>
+<li>The function ends with the <code>return 0</code> statement.</li>
+<li>Comments are created using <code>//</code>. For multi-line comments one start with <code>/*</code> and end with <code>*/</code>.</li>
+</ul>
+</div>
+<div id="variables" class="section level3">
+<h3>Variables</h3>
+<p>There are various types of variables for storing data values. Some of the main ones are:</p>
+<ul>
+<li><code>int</code>: integers</li>
+<li><code>double</code>: floating point numbers</li>
+<li><code>bool</code>: boolean values</li>
+<li><code>char</code>: single characters, such as ‘c’ or ‘A’ (enclosed within single quotes)</li>
+<li><code>string</code>: stores text, such as “Hello” (enclosed within double quotes)</li>
+</ul>
+<p>Because C++ is a typed language we must always specify the type of the variable when we declare it. For example,</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main()
+{
+    std::string a=&quot;hello&quot;;
+    int b=2;
+    bool c=true;
+    float d=2.3;
+
+    std::cout &lt;&lt; &quot;This is a string: &quot; &lt;&lt; a &lt;&lt;  std::endl;
+    std::cout &lt;&lt; &quot;This is an integer: &quot; &lt;&lt; b &lt;&lt;  std::endl;
+    std::cout &lt;&lt; &quot;This is a boolean: &quot; &lt;&lt; c &lt;&lt;  std::endl;
+    std::cout &lt;&lt; &quot;This is a float: &quot; &lt;&lt; d &lt;&lt;  std::endl;
+
+    return 0;
+}</code></pre>
+<p>Also note that variables of the same type can be declared at the same time using</p>
+<pre class="cpp"><code>int a = 1, b = 2, c = 3;</code></pre>
+</div>
+<div id="operators" class="section level3">
+<h3>Operators</h3>
+<ol style="list-style-type: decimal">
+<li>Arithmetic operators: <code>+</code> (addition), <code>-</code> (subtraction), <code>*</code> (multiplication), <code>/</code> (division), <code>%</code> (modulus), <code>++</code> (increment).</li>
+<li>Comparison operators: <code>==</code> (equal), <code>!=</code> (not equal), <code>&lt;</code> (less than), <code>&lt;=</code> (less than or equal to)</li>
+<li>Logical operators: <code>&amp;&amp;</code> (and), <code>||</code> (or), <code>!</code> (not)</li>
+</ol>
+</div>
+<div id="conditions" class="section level3">
+<h3>Conditions</h3>
+<p>A basic example for using conditions that returns whether the assigned value of <span class="math inline">\(i\)</span> is positive, negative or zero.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+int main()
+{
+    int i=35;
+
+    if (i&gt;0)
+    {
+        std::cout &lt;&lt; &quot;i is positive&quot; &lt;&lt; std::endl;
+    }
+
+    else if (i==0)
+    {
+        std::cout &lt;&lt; &quot;i is zero&quot; &lt;&lt; std::endl;
+    }
+
+    else
+    {
+        std::cout &lt;&lt; &quot;i is negative&quot; &lt;&lt;  std::endl;
+    }
+
+    return 0;
+}
+</code></pre>
+</div>
+<div id="for-loop" class="section level3">
+<h3>For Loop</h3>
+<p>To demonstrate the usage of loops, we create a quick program that counts back from <span class="math inline">\(5\)</span> and then prints the text “Run!”.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+int main()
+{
+    for (int i=5; i&gt;0; i--)
+    {
+        std::cout &lt;&lt; i &lt;&lt; std::endl;
+    }
+
+    std::cout &lt;&lt; &quot;Run!&quot; &lt;&lt; std::endl;
+
+    return 0;
+}</code></pre>
+<p>Note that there are <span class="math inline">\(3\)</span> statement required to execute the for loop:</p>
+<ol style="list-style-type: decimal">
+<li>The first statement is executed one time at the beginning. In this case it sets the variable <span class="math inline">\(i\)</span> to be the integer <span class="math inline">\(5\)</span>.</li>
+<li>The second argument defines the condition for executing the code. While this condition holds the code block is executed again.</li>
+<li>Every time after the code block has been executed the last statement is run. In our case we decrement the variable <span class="math inline">\(i\)</span> by <span class="math inline">\(1\)</span> after every iteration.</li>
+</ol>
+</div>
+<div id="while-loop" class="section level3">
+<h3>While Loop</h3>
+<p>The while loop runs the code block while the specified condition is satisfied. For example, the same code above can be rewritten as:</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+int main()
+{
+  int i = 5;
+  while (i!=0) {
+    std::cout &lt;&lt; i &lt;&lt; std::endl;
+    i--;
+  }
+  std::cout &lt;&lt; &quot;Run!&quot; &lt;&lt; std::endl;
+  
+  return 0;
+}</code></pre>
+</div>
+<div id="functions" class="section level3">
+<h3>Functions</h3>
+<p>A C++ function consists of two parts:</p>
+<ul>
+<li><em>declaration</em> : <code>return_type function_name(parameters)</code>. Note that a function doesn’t necessarily need any parameters.</li>
+<li><em>definition</em> : code to be executed.</li>
+</ul>
+<p>This program contains <span class="math inline">\(3\)</span> functions that are then used in the <em>main</em> function.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+//COMPUTE SUM
+int sum ( int a, int b)
+{
+    int c = a + b;
+    return c;
+}
+
+//CHECK IF NUMBER IS EVEN
+bool even ( int a)
+{
+    return a % 2 == 0;
+}
+
+//FUNCTION THAT PRINTS TEXT AND HAS NO RETURN VALUE.
+void print_hello()
+{
+    std::cout &lt;&lt; &quot;Hello!&quot; &lt;&lt;  std::endl;
+}
+
+int main()
+{   
+    int c = sum(2,4);
+    std::cout &lt;&lt; &quot;2 + 4 = &quot; &lt;&lt;  c &lt;&lt; std::endl;
+
+    std::cout &lt;&lt; &quot;Is 4 even? &quot; &lt;&lt; even(4) &lt;&lt; std::endl;
+
+    print_hello();
+    
+    return 0;
+}
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>You can only use functions that have already been declared. C++ works from top to bottom.</li>
+<li>You can have multiple functions in one file.</li>
+<li>Multiple functions can share the same name, but use different parameters. However, the functions definition must be the same. For example, we might want to use the <code>sum</code> function to sum both integers and doubles.</li>
+</ul>
+</div>
+<div id="variable-scopes" class="section level3">
+<h3>Variable Scopes</h3>
+<p>The scope of a variable is the region of the program that can see and access that variable. There are tWO main such regions:</p>
+<ul>
+<li><em>local</em>: inside a function</li>
+<li><em>global</em>: outside of all functions</li>
+</ul>
+<p>Esentially, every set of brackets defines a scope.</p>
+<p>We use the example that we used for the loops. We declare the global variable outsite of <code>main()</code>, <code>i=10</code>. Then within the <code>for (int i=5; i&gt;0; i--)</code> scope of the for loop we declare a local variable with the same name, <code>i=5</code>, which at the end of the loop has the value <code>i=1</code>. However, because we have only modified the local variable, when we print it at the end of the code block, outside of the loop, it has the original value <code>i=10</code>.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+//DECLARE GLOBAL VARIABLE
+int i;
+
+int main()
+{
+  //DEFINE GLOBAL VARIABLE
+  int i = 10;
+  
+    for (int i=5; i&gt;0; i--)
+    {
+        std::cout &lt;&lt; i &lt;&lt; std::endl;
+    }
+
+    std::cout &lt;&lt; &quot;Run!&quot; &lt;&lt; std::endl;
+
+    std::cout &lt;&lt; &quot;The current value of i is: &quot; &lt;&lt; i &lt;&lt; std::endl;
+    return 0;
+}</code></pre>
+</div>
+<div id="vectors" class="section level3">
+<h3>Vectors</h3>
+<p>C++ vectors can only hold elements that have the same type. To see how vectors work in action we use the countdown example above and append the values from <span class="math inline">\(5\)</span> to <span class="math inline">\(1\)</span> to the vector.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main()
+{
+  //DECLARE VECTOR TO STORE INTEGERS AND INITIALIZE WITH SOME VALUES
+  std::vector&lt;int&gt; vect = {5, 4, 3, 2};
+  
+  //APPEND VALUES TO THE END OF THE VECTOR
+  vect.push_back( 1 );
+  
+  //PRINT VECTOR VALUES USING THE LOOOP
+  std::cout &lt;&lt; &quot;vect{ &quot;;
+  
+  int i = 0;
+  while (i!=5) {
+
+    //PRINT THE iTH ELEMENT OF THE VECTOR
+    std::cout &lt;&lt; vect[i] &lt;&lt; &quot; &quot;;
+    i++;
+  }
+  
+  std::cout &lt;&lt; &quot;}&quot; &lt;&lt; std::endl;
+  
+  return 0;
+}</code></pre>
+</div>
+<div id="dictionaries" class="section level3">
+<h3>Dictionaries</h3>
+<p>The dictionaries in C++ are called maps and they contain values that can be accessed using a key, which they all have to be the same type for the dictionary. Similarly, all the stored values within one dictionary have to have the same type.</p>
+<p>Let’s create a map that stores doubles indexed by strings.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;string&gt;
+
+int main()
+{
+  //DECLARE THE MAP
+  std::map&lt;std::string, double&gt; famous_numbers;
+  
+  //ADD KEY-VALUE PAIRS
+  famous_numbers[&quot;pi&quot;] = 3.1416;
+  famous_numbers[&quot;e&quot;] = 2.7183;
+  famous_numbers[&quot;golden ratio&quot;] = 1.6180;
+  
+  //LOOP THROUGH ALL THE VALUES BASED ON THE INDECES AND PRINT THEM
+  for (auto item : famous_numbers)
+  {
+    //GET THE INDEX OF THE ITEM
+    std::string index = item.first;
+    
+    //GET VALUE BY INDEX
+    double value = famous_numbers[index];
+    
+    //OUTPUT KEY-VALUE PAIR
+    std::cout &lt;&lt; &quot;The famous number &quot; &lt;&lt; index &lt;&lt; &quot; is (approximately) equal to &quot; &lt;&lt; value &lt;&lt; std::endl;
+  }
+  
+  return 0;
+}</code></pre>
+</div>
+<div id="objects-and-classes" class="section level3">
+<h3>Objects and Classes</h3>
+<p><strong>Terminology</strong>:</p>
+<ul>
+<li>object = building block of OOP</li>
+<li>class = set of objects that share a common structure and behaviour</li>
+<li>method = function associated with a particular class</li>
+</ul>
+<p><strong>Core concepts</strong>:</p>
+<ul>
+<li><p><strong>encapsulation</strong>: each object keeps its state private so that other objects dont have direct access to its state. The only way to communicate with an object is via methods, private or public.</p></li>
+<li><p><strong>abstraction</strong>: the details of internal implementation are hidden, and only the high-level mechanism for the operations relevant to other objects is exposed.</p></li>
+<li><p><strong>inheritance</strong>: a child class inherits the attributes and methods of a parent class but it also has its own.</p></li>
+<li><p><strong>polymorphism</strong>: different classes can use the same interface by choosing the right method to call (the “+” operator can be used both for summing integers and matrices)</p></li>
+</ul>
+<p>Often we want to declare the classes in different files. In that case we might want to write <span class="math inline">\(3\)</span> main files when using classes.</p>
+<ol style="list-style-type: decimal">
+<li>A header file, called <code>square.h</code>, used to declare the class and the related functions or methods.</li>
+</ol>
+<pre class="cpp"><code>#ifndef _SQUARE_H
+#define _SQUARE_H
+
+// SQUARE CLASS
+class Square 
+{
+  //AVAILABLE OUTSIDE CLASS
+  public:
+    
+  //DECLARE CONSTRUCTOR
+  Square(double side_length);
+  
+  //DECLARE METHOD
+  double area();
+
+  //AVAILABLE ONLY TO FUNCTIONS WITHIN THE CLASS
+  private:
+  double _side_length;
+};
+
+#endif</code></pre>
+<p>Notes:</p>
+<ul>
+<li>You need a semicolon aFter declaring the class.</li>
+<li>The functions and data are categorised as either <code>public</code>, so they are available outside of the class, or as <code>private</code>, so available only to functions within the class. Usually the <code>private</code> variables or functions start with an underscore <code>_</code>.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>A definition file <code>square.cpp</code>.</li>
+</ol>
+<pre class="cpp"><code>#include &quot;square.h&quot;
+#include &lt;iostream&gt;
+
+// DEFINE CONSTRUCTOR
+Square::Square(double side_length)
+{
+  // SAVE THE PRIVATE PARAMETER
+  this-&gt;_side_length = side_length;
+}
+
+// DEFINE METHOD
+double Square::area()
+{
+  return this-&gt;_side_length * this-&gt;_side_length;
+}</code></pre>
+<p>Notes:</p>
+<ul>
+<li>The constructor must have the same name as the class.</li>
+<li>To create a method associated to the class you must use the syntax <code>class_name::method_name</code>.</li>
+<li>Methods can access the private data and functions. This is done via <code>this-&gt;_private</code>.</li>
+</ul>
+<p>Finally, create the main file <code>main.cpp</code>.</p>
+<pre class="cpp"><code>#include &quot;square.h&quot;
+#include &lt;iostream&gt;
+
+int main(){
+  //CREATE SQUARES WITH SIDE LENGTHS 3 AND 4.5
+  Square square_obj_1(3);
+  Square square_obj_2(4.5);
+  
+  //PRINT SQUARE AREAS
+  std::cout &lt;&lt; &quot;Square 1 has area &quot; &lt;&lt; square_obj_1.area() &lt;&lt; std::endl;
+  std::cout &lt;&lt; &quot;Square 2 has area &quot; &lt;&lt; square_obj_2.area() &lt;&lt; std::endl;
+  return(0);
+}</code></pre>
+<p>We have create two <code>Square</code> objects with different side lengths and printed their areas computed using the <code>area</code> method.</p>
+</div>

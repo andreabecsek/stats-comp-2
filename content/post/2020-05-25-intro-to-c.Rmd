@@ -1,0 +1,405 @@
+---
+title: Intro to C++
+author: Andrea Becsek
+date: '2020-05-25'
+slug: intro-to-c
+categories: []
+tags: []
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(Rcpp)
+```
+
+C++ is a statically typed, compiled language, and it can be used across multiple platforms. Moreover, C++ is a great programming language for high-performance computing as it provides the user with much control over memory and system resources. It is also great for object-oriented programming and therefore it is used for a wide range of applications.
+
+### Creating a C++ program and some basic syntax
+
+1. Write your code using a text editor and save as `filename.cpp`.
+2. To compile the file from the terminal use `g++ filename.cpp -o filename`.
+3. The executable program can now be called from within the saved directory using `./filename`.
+
+Let's examine a basic piece of code that prints "Hello World!".
+```{Rcpp, eval=FALSE}
+#include <iostream>
+using namespace std;
+
+// MAIN FUNCTION
+int main() {
+  cout << "Hello World!";
+  return 0;
+} 
+```
+
+* `#include <iostream>` is a header file library which adds additional functionality to C++ programs. In this case we use it for `std::cout` which outputs objects, such as text, to the screen.
+* `using namespace std` allows us to use object and variable names from the standard library.
+* Note that every statement must end with `;`.
+* The `main` function is the function that is executed when the program is executed. The type of the output must also be specified, which in this case is `int`, an integer.
+* The `cout` function together with the `<<` operator simply outputs the text "Hello World!".
+* The function ends with the `return 0` statement. 
+* Comments are created using `//`. For multi-line comments one start with `/*` and end with `*/`.
+
+### Variables
+
+There are various types of variables for storing data values. Some of the main ones are:
+
+* `int`: integers
+* `double`: floating point numbers
+* `bool`: boolean values
+* `char`: single characters, such as 'c' or 'A' (enclosed within single quotes)
+* `string`: stores text, such as "Hello" (enclosed within double quotes)
+
+Because C++ is a typed language we must always specify the type of the variable when we declare it. For example,
+```{Rcpp eval=FALSE}
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::string a="hello";
+	int b=2;
+	bool c=true;
+	float d=2.3;
+
+	std::cout << "This is a string: " << a <<  std::endl;
+	std::cout << "This is an integer: " << b <<  std::endl;
+	std::cout << "This is a boolean: " << c <<  std::endl;
+	std::cout << "This is a float: " << d <<  std::endl;
+
+	return 0;
+}
+```
+
+Also note that variables of the same type can be declared at the same time using 
+```{Rcpp eval=FALSE}
+int a = 1, b = 2, c = 3;
+```
+
+
+### Operators
+
+1. Arithmetic operators: `+` (addition), `-` (subtraction), `*` (multiplication), `/` (division), `%` (modulus), `++` (increment).
+2. Comparison operators: `==` (equal), `!=` (not equal), `<` (less than), `<=` (less than or equal to)
+3. Logical operators: `&&` (and), `||` (or), `!` (not)
+
+### Conditions
+A basic example for using conditions that returns whether the assigned value of $i$ is positive, negative or zero.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+int main()
+{
+	int i=35;
+
+	if (i>0)
+	{
+		std::cout << "i is positive" << std::endl;
+	}
+
+	else if (i==0)
+	{
+		std::cout << "i is zero" << std::endl;
+	}
+
+	else
+	{
+		std::cout << "i is negative" <<  std::endl;
+	}
+
+	return 0;
+}
+
+```
+
+### For Loop
+To demonstrate the usage of loops, we create a quick program that counts back from $5$ and then prints the text "Run!".
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+int main()
+{
+	for (int i=5; i>0; i--)
+	{
+		std::cout << i << std::endl;
+	}
+
+	std::cout << "Run!" << std::endl;
+
+	return 0;
+}
+```
+
+Note that there are $3$ statement required to execute the for loop:
+
+1. The first statement is executed one time at the beginning. In this case it sets the variable $i$ to be the integer $5$.
+2. The second argument defines the condition for executing the code. While this condition holds the code block is executed again.
+3. Every time after the code block has been executed the last statement is run. In our case we decrement the variable $i$ by $1$ after every iteration.
+
+### While Loop
+
+The while loop runs the code block while the specified condition is satisfied. For example, the same code above can be rewritten as:
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+int main()
+{
+  int i = 5;
+  while (i!=0) {
+    std::cout << i << std::endl;
+    i--;
+  }
+  std::cout << "Run!" << std::endl;
+  
+  return 0;
+}
+```
+
+
+### Functions
+
+A C++ function consists of two parts: 
+
+* *declaration* : `return_type function_name(parameters)`. Note that a function doesn't necessarily need any parameters.
+* *definition* : code to be executed.
+
+This program contains $3$ functions that are then used in the *main* function.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+//COMPUTE SUM
+int sum ( int a, int b)
+{
+	int c = a + b;
+	return c;
+}
+
+//CHECK IF NUMBER IS EVEN
+bool even ( int a)
+{
+	return a % 2 == 0;
+}
+
+//FUNCTION THAT PRINTS TEXT AND HAS NO RETURN VALUE.
+void print_hello()
+{
+	std::cout << "Hello!" <<  std::endl;
+}
+
+int main()
+{	
+	int c = sum(2,4);
+	std::cout << "2 + 4 = " <<  c << std::endl;
+
+	std::cout << "Is 4 even? " << even(4) << std::endl;
+
+	print_hello();
+	
+	return 0;
+}
+
+```
+
+Notes:
+
+* You can only use functions that have already been declared. C++ works from top to bottom.
+* You can have multiple functions in one file.
+* Multiple functions can share the same name, but use different parameters. However, the functions definition must be the same. For example, we might want to use the `sum` function to sum both integers and doubles. 
+
+### Variable Scopes
+The scope of a variable is the region of the program that can see and access that variable. There are tWO main such regions:
+
+* *local*: inside a function 
+* *global*: outside of all functions
+
+Esentially, every set of brackets defines a scope.
+
+We use the example that we used for the loops. We declare the global variable outsite of `main()`, `i=10`. Then within the `for (int i=5; i>0; i--)` scope of the for loop we declare a local variable with the same name, `i=5`, which at the end of the loop has the value `i=1`. However, because we have only modified the local variable, when we print it at the end of the code block, outside of the loop, it has the original value `i=10`.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+//DECLARE GLOBAL VARIABLE
+int i;
+
+int main()
+{
+  //DEFINE GLOBAL VARIABLE
+  int i = 10;
+  
+	for (int i=5; i>0; i--)
+	{
+		std::cout << i << std::endl;
+	}
+
+	std::cout << "Run!" << std::endl;
+
+	std::cout << "The current value of i is: " << i << std::endl;
+	return 0;
+}
+```
+
+### Vectors
+
+C++ vectors can only hold elements that have the same type. To see how vectors work in action we use the countdown example above and append the values from $5$ to $1$ to the vector.
+
+```{Rcpp eval=FALSE}
+#include <iostream>
+#include <vector>
+
+int main()
+{
+  //DECLARE VECTOR TO STORE INTEGERS AND INITIALIZE WITH SOME VALUES
+  std::vector<int> vect = {5, 4, 3, 2};
+  
+  //APPEND VALUES TO THE END OF THE VECTOR
+  vect.push_back( 1 );
+  
+  //PRINT VECTOR VALUES USING THE LOOOP
+  std::cout << "vect{ ";
+  
+  int i = 0;
+  while (i!=5) {
+
+    //PRINT THE iTH ELEMENT OF THE VECTOR
+    std::cout << vect[i] << " ";
+    i++;
+  }
+  
+  std::cout << "}" << std::endl;
+  
+  return 0;
+}
+```
+
+### Dictionaries
+
+The dictionaries in C++ are called maps and they contain values that can be accessed using a key, which they all have to be the same type for the dictionary. Similarly, all the stored values within one dictionary have to have the same type.
+
+Let's create a map that stores doubles indexed by strings.
+```{Rcpp eval=FALSE}
+#include <iostream>
+#include <map>
+#include <string>
+
+int main()
+{
+  //DECLARE THE MAP
+  std::map<std::string, double> famous_numbers;
+  
+  //ADD KEY-VALUE PAIRS
+  famous_numbers["pi"] = 3.1416;
+  famous_numbers["e"] = 2.7183;
+  famous_numbers["golden ratio"] = 1.6180;
+  
+  //LOOP THROUGH ALL THE VALUES BASED ON THE INDECES AND PRINT THEM
+  for (auto item : famous_numbers)
+  {
+    //GET THE INDEX OF THE ITEM
+    std::string index = item.first;
+    
+    //GET VALUE BY INDEX
+    double value = famous_numbers[index];
+    
+    //OUTPUT KEY-VALUE PAIR
+    std::cout << "The famous number " << index << " is (approximately) equal to " << value << std::endl;
+  }
+  
+  return 0;
+}
+```
+
+### Objects and Classes
+
+**Terminology**:
+
+* object = building block of OOP
+* class = set of objects that share a common structure and behaviour
+* method = function associated with a particular class
+
+**Core concepts**:
+
+* **encapsulation**: each object keeps its state private so that other objects dont have direct access to its state. The only way to communicate with an object is via methods, private or public.
+
+* **abstraction**: the details of internal implementation are hidden, and only the high-level mechanism for the operations relevant to other objects is exposed.
+
+* **inheritance**: a child class inherits the attributes and methods of a parent class but it also has its own.
+
+* **polymorphism**: different classes can use the same interface by choosing the right method to call (the "+" operator can be used both for summing integers and matrices)
+
+Often we want to declare the classes in different files. In that case we might want to write $3$ main files when using classes.
+
+1. A header file, called `square.h`, used to declare the class and the related functions or methods. 
+```{Rcpp eval=FALSE}
+#ifndef _SQUARE_H
+#define _SQUARE_H
+
+// SQUARE CLASS
+class Square 
+{
+  //AVAILABLE OUTSIDE CLASS
+  public:
+    
+  //DECLARE CONSTRUCTOR
+  Square(double side_length);
+  
+  //DECLARE METHOD
+  double area();
+
+  //AVAILABLE ONLY TO FUNCTIONS WITHIN THE CLASS
+  private:
+  double _side_length;
+};
+
+#endif
+```
+
+Notes:
+
+* You need a semicolon aFter declaring the class.
+* The functions and data are categorised as either `public`, so they are available outside of the class, or as `private`, so available only to functions within the class. Usually the `private` variables or functions start with an underscore `_`.
+
+2. A definition file `square.cpp`.
+```{Rcpp eval=FALSE}
+#include "square.h"
+#include <iostream>
+
+// DEFINE CONSTRUCTOR
+Square::Square(double side_length)
+{
+  // SAVE THE PRIVATE PARAMETER
+  this->_side_length = side_length;
+}
+
+// DEFINE METHOD
+double Square::area()
+{
+  return this->_side_length * this->_side_length;
+}
+```
+
+Notes:
+
+* The constructor must have the same name as the class.
+* To create a method associated to the class you must use the syntax `class_name::method_name`.
+* Methods can access the private data and functions. This is done via `this->_private`.
+
+Finally, create the main file `main.cpp`.
+```{Rcpp eval=FALSE}
+#include "square.h"
+#include <iostream>
+
+int main(){
+  //CREATE SQUARES WITH SIDE LENGTHS 3 AND 4.5
+  Square square_obj_1(3);
+  Square square_obj_2(4.5);
+  
+  //PRINT SQUARE AREAS
+  std::cout << "Square 1 has area " << square_obj_1.area() << std::endl;
+  std::cout << "Square 2 has area " << square_obj_2.area() << std::endl;
+  return(0);
+}
+```
+
+We have create two `Square` objects with different side lengths and printed their areas computed using the `area` method.
+
+
+

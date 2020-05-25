@@ -5,10 +5,20 @@
     <link>/author/andrea-becsek/</link>
     <description>Recent content in Andrea Becsek on Statistical Computing 2 Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 23 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/author/andrea-becsek/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Intro to C&#43;&#43;</title>
+      <link>/post/intro-to-c/</link>
+      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/intro-to-c/</guid>
+      <description>C++ is a statically typed, compiled language, and it can be used across multiple platforms. Moreover, C++ is a great programming language for high-performance computing as it provides the user with much control over memory and system resources. It is also great for object-oriented programming and therefore it is used for a wide range of applications.
+Creating a C++ program and some basic syntax Write your code using a text editor and save as filename.</description>
+    </item>
     
     <item>
       <title>Introduction to Rcpp</title>

@@ -127,6 +127,7 @@ NumericVector meanKRS_cpp(const NumericVector y, const NumericVector x, const Nu
 Source the file containing the function above.
 
 ```{r}
+getwd()
 sourceCpp("../code/meanKRS.cpp")
 ```
 

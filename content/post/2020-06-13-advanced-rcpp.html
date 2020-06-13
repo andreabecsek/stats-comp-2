@@ -1,0 +1,234 @@
+---
+title: Advanced Rcpp
+author: Andrea Becsek
+date: '2020-06-13'
+slug: advanced-rcpp
+categories: []
+tags: []
+---
+
+
+
+<p>Load dataset on solar electricity production in Sydney</p>
+<pre class="r"><code>set.seed(123)
+# load dataset
+solar &lt;- readRDS(&#39;../data/solarAU.RDS&#39;)
+
+# reduce dataset to 2000 observations
+solar &lt;- solar[1:2000,]
+
+# create a log production variable
+solar$logprod &lt;- log(solar$prod + 0.01)
+
+head(solar)</code></pre>
+<pre><code>##       prod          toy tod   logprod
+## 8832 0.019 0.000000e+00   0 -3.540459
+## 8833 0.032 5.708088e-05   1 -3.170086
+## 8834 0.020 1.141618e-04   2 -3.506558
+## 8835 0.038 1.712427e-04   3 -3.036554
+## 8836 0.036 2.283235e-04   4 -3.079114
+## 8837 0.012 2.854044e-04   5 -3.816713</code></pre>
+<p>Plot the log production as a function of <code>toy</code> and <code>tod</code></p>
+<pre class="r"><code>ggplot(solar, aes(x=toy, y=tod,z=logprod))+
+  stat_summary_hex()+
+  scale_fill_gradientn(colours=viridis(50))</code></pre>
+<p><img src="/post/2020-06-13-advanced-rcpp_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>To model the log-production we start with a simply polynomial regression model
+<span class="math display">\[\mathbb{E}(y|\boldsymbol{x})=\beta_0+\beta_1tod+\beta_2tod^2+\beta_3toy+\beta_4toy^2\]</span></p>
+<p>Fitting this model in <code>R</code></p>
+<pre class="r"><code>fit &lt;- lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar)
+lm_r &lt;- fit$coefficients</code></pre>
+<p>Fit the same model using <code>Rcpp</code>. First set the model matrix and output variable is</p>
+<pre class="r"><code>X &lt;- with(solar,cbind(1,tod,tod^2,toy,toy^2))
+y &lt;- solar$logprod</code></pre>
+<p>Using cholesky factorisation to solve the linear system
+<span class="math display">\[(X^TX)\beta=X^Ty\]</span>
+Note that <span class="math inline">\(X^TX\)</span> is a symetric positive-definite square matrix, so it can be decomposed as <span class="math inline">\(A=X^TX=U^TU\)</span>, where <span class="math inline">\(U\)</span> is a upper triangular matrix.</p>
+<pre class="r"><code>lm_naive_r &lt;- function(X,y){
+  beta &lt;- solve(t(X)%*%X)%*%t(X)%*%y
+  return(beta)
+}
+naive_r &lt;- lm_naive_r(X,y)
+
+lm_chol_r &lt;- function(X,y){
+  U &lt;- chol(t(X)%*%X)
+  C &lt;- forwardsolve(t(U), t(X)%*%y)
+  beta &lt;- solve(U,C)
+  return(beta)
+}
+chol_r &lt;- lm_chol_r(X,y)
+
+lm_qr_r &lt;- function(X,y){
+  qr &lt;- qr.default(X)
+  beta &lt;- backsolve(qr$qr, qr.qty(qr,y))
+  return(beta)
+}
+qr_r &lt;- lm_qr_r(X,y)
+
+microbenchmark(lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar),lm_naive_r(X,y), lm_chol_r(X,y), unit=&#39;relative&#39;)</code></pre>
+<pre><code>## Unit: relative
+##                                                         expr      min        lq
+##  lm(logprod ~ tod + I(tod^2) + toy + I(toy^2), data = solar) 9.923817 10.091829
+##                                             lm_naive_r(X, y) 1.183623  1.254399
+##                                              lm_chol_r(X, y) 1.000000  1.000000
+##      mean   median       uq      max neval cld
+##  6.398452 8.641091 8.210720 1.083675   100   b
+##  1.722774 1.216791 1.256665 2.323860   100  a 
+##  1.000000 1.000000 1.000000 1.000000   100  a</code></pre>
+<p>Check that the obtained estimates are the same as those given by <code>lm</code></p>
+<pre class="r"><code>max(abs(lm_r-naive_r))</code></pre>
+<pre><code>## [1] 1.457252e-10</code></pre>
+<pre class="r"><code>max(abs(lm_r-chol_r))</code></pre>
+<pre><code>## [1] 7.420908e-11</code></pre>
+<pre class="r"><code>max(abs(lm_r-qr_r))</code></pre>
+<pre><code>## [1] 2.664535e-15</code></pre>
+<p>Writing a similar cholesky implementation using <code>Rcpp</code></p>
+<pre class="r"><code>sourceCpp(code = &#39;
+// [[Rcpp::depends(RcppArmadillo)]]
+#include &lt;RcppArmadillo.h&gt;
+using namespace arma;
+
+// [[Rcpp::export(name = &quot;lm_chol_Rcpp&quot;)]]
+arma::vec lm_chol_Rcpp(arma::mat&amp; X, arma::vec&amp; y) {
+  arma::mat U = chol(X.t() * X);
+  arma::vec C = solve(trimatl(U.t()), X.t() * y);
+  arma::vec beta = solve(trimatu(U),C);
+  return beta;
+}&#39;)</code></pre>
+<!-- # ```{r} -->
+<!-- # sourceCpp(code = ' -->
+<!-- # // [[Rcpp::depends(RcppArmadillo)]] -->
+<!-- # #include <RcppArmadillo.h> -->
+<!-- # using namespace arma; -->
+<!-- #  -->
+<!-- # // [[Rcpp::export(name = "lm_qr_Rcpp")]] -->
+<!-- # arma::mat lm_qr_Rcpp(arma::mat& X, arma::vec& y) { -->
+<!-- #   arma::mat Q, R; -->
+<!-- #   qr_econ(Q,R,X); -->
+<!-- #   arma::vec beta = solve(R, Q.t()*y); -->
+<!-- #   return beta; -->
+<!-- # }') -->
+<!-- # ``` -->
+<p>Check that the function gives the correct result.</p>
+<pre class="r"><code>chol_Rcpp &lt;- lm_chol_Rcpp(X,y)
+max(abs(lm_r-chol_Rcpp))</code></pre>
+<pre><code>## [1] 7.609202e-11</code></pre>
+<p>Since the error is comparable to machine precision, the function seems to be working correctly.</p>
+<p>Compare the <code>r</code> and the <code>RcppArmadillo</code> implementation. The <code>r</code> implementation is <span class="math inline">\(5\)</span> times slower than the <code>RcppArmadillo</code> one.</p>
+<pre class="r"><code>microbenchmark(lm_chol_r(X,y),lm_chol_Rcpp(X,y), unit=&#39;relative&#39;)</code></pre>
+<pre><code>## Unit: relative
+##                expr      min       lq     mean   median       uq       max
+##     lm_chol_r(X, y) 3.903198 3.922965 2.927625 3.840983 3.825519 0.5759898
+##  lm_chol_Rcpp(X, y) 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000
+##  neval cld
+##    100   b
+##    100  a</code></pre>
+<p>To understand whether the polynomial fit is a good model choice, we note that the second plot captures a non-linearity of the residuals.</p>
+<pre class="r"><code>solar$fitPoly &lt;- fit$fitted.values
+
+pl1 &lt;- ggplot(solar,
+              aes(x = toy, y = tod, z = fitPoly)) +
+       stat_summary_hex() +
+       scale_fill_gradientn(colours = viridis(50))
+
+pl2 &lt;- ggplot(solar,
+              aes(x = toy, y = tod, z = logprod - fitPoly)) +
+       stat_summary_hex() +
+       scale_fill_gradientn(colours = viridis(50))
+grid.arrange(pl1, pl2, ncol = 2)</code></pre>
+<p><img src="/post/2020-06-13-advanced-rcpp_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>To obtain a better fit, we implement a local least regression approach which enables the coefficients to depend on <span class="math inline">\(\boldsymbol{x}\)</span>. To achieve this, for a fixed value of <span class="math inline">\(\boldsymbol{x}_0\)</span> we find <span class="math inline">\(\hat{\beta}(\boldsymbol{x}_0)\)</span> that minimizes the objective:
+<span class="math display">\[\hat{\beta}(\boldsymbol{x}_0)=\underset{\beta}{\text{argmin}}\sum_{i=1}^nk_{\boldsymbol{H}}(\boldsymbol{x}_0-\boldsymbol{x}_i)(y_i-\tilde{\boldsymbol{x}_i}^T\beta)^2,\]</span>
+where <span class="math inline">\(k_{\boldsymbol{H}}\)</span> is a density kernel with positive bandwidth matrix <span class="math inline">\(\boldsymbol{H}\)</span>.</p>
+<p>Implementing this model in <code>r</code> using a Gaussian kernel:</p>
+<pre class="r"><code>lmLocal &lt;- function(y, x0, X0, x, X, H){
+  w &lt;- dmvnorm(x, x0, H)
+  fit &lt;- lm(y ~ -1 + X, weights = w)
+  return( t(X0) %*% coef(fit) )
+}</code></pre>
+<p>Since this approach requires re-estimating the model for every <span class="math inline">\(\boldsymbol{x}_0\)</span>, we need to fit 2000 models, which might take a while. So we start by only using a random subsample of <span class="math inline">\(2000\)</span> data points.</p>
+<pre class="r"><code>subsample &lt;- sample(1:nrow(solar), 2000, replace = FALSE)
+y &lt;- solar$logprod
+set.seed(123)
+solar_sub &lt;- solar[subsample,]
+x &lt;- as.matrix(solar[c(&#39;tod&#39;,&#39;toy&#39;)])
+x0 &lt;- x[subsample,]
+X0 &lt;- X[subsample,]
+H = diag(c(1, 0.1)^2)</code></pre>
+<p>The predictions at each of the <span class="math inline">\(2000\)</span> random locations are given by</p>
+<pre class="r"><code>predLocal_r &lt;- sapply(1:2000, function(ii){
+  lmLocal(y = y, x0 = x0[ii, ], X0 = X0[ii, ], x = x, X = X, H  = H)
+})</code></pre>
+<p>Let’s check the fit of this model</p>
+<pre class="r"><code>solar_sub$fitLocal_r &lt;- predLocal_r
+
+pl1 &lt;- ggplot(solar_sub,
+       aes(x = toy, y = tod, z = fitLocal_r)) +
+       stat_summary_hex() +
+       scale_fill_gradientn(colours = viridis(50))
+
+pl2 &lt;- ggplot(solar_sub,
+       aes(x = toy, y = tod, z = logprod - fitLocal_r)) +
+       stat_summary_hex() +
+       scale_fill_gradientn(colours = viridis(50))
+
+grid.arrange(pl1, pl2, ncol = 2)</code></pre>
+<p><img src="/post/2020-06-13-advanced-rcpp_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>The residual plot shows no clear pattern, so this fit is definitely better. Also, the plot on the left does look similar to the data, which is also a good indicator.</p>
+<p>Let’s now implement this model using <code>RcppArmadillo</code>. First, we call the <code>Armadillo</code> function that evaluates the Gaussian log-density, <code>dmvnInt</code>. Note that this function takes matrix of quantiles <span class="math inline">\(X\)</span>, mean vector <span class="math inline">\(mu\)</span> and the lower triangular Cholesky factor of the covariance matrix <span class="math inline">\(L\)</span>.</p>
+<pre class="r"><code>sourceCpp(code = &#39;
+// [[Rcpp::depends(RcppArmadillo)]]
+#include &lt;RcppArmadillo.h&gt;
+using namespace arma;
+
+
+// [[Rcpp::export(name = &quot;dmvnInt&quot;)]]
+vec dmvnInt(mat &amp; X, const rowvec &amp; mu, mat &amp; L)
+{
+  unsigned int d = X.n_cols;
+  unsigned int m = X.n_rows;
+  
+  vec D = L.diag();
+  vec out(m);
+  vec z(d);
+  
+  double acc;
+  unsigned int icol, irow, ii;
+  for(icol = 0; icol &lt; m; icol++)
+  {
+    for(irow = 0; irow &lt; d; irow++)
+    {
+     acc = 0.0;
+     for(ii = 0; ii &lt; irow; ii++) acc += z.at(ii) * L.at(irow, ii);
+     z.at(irow) = ( X.at(icol, irow) - mu.at(irow) - acc ) / D.at(irow);
+    }
+    out.at(icol) = sum(square(z));
+  }
+
+  out = exp( - 0.5 * out - ( (d / 2.0) * log(2.0 * M_PI) + sum(log(D)) ) );
+
+  return out;
+}&#39;)</code></pre>
+<p>Implementation of local polynomial regression</p>
+<pre class="r"><code>Rcpp::sourceCpp(&#39;../code/local_rcpp.cpp&#39;)</code></pre>
+<pre class="r"><code>predLocal_Rcpp &lt;- lm_local_Rcpp(y,x0,X0,x,X,H)</code></pre>
+<p>Compare results of the two functions</p>
+<pre class="r"><code>max(predLocal_r-predLocal_Rcpp)</code></pre>
+<pre><code>## [1] 9.241496e-13</code></pre>
+<p>Compare performance of the two implementations.</p>
+<pre class="r"><code>system.time(sapply(1:2000, function(ii){
+  lmLocal(y = y, x0 = x0[ii, ], X0 = X0[ii, ], x = x, X = X, H  = H)
+}))</code></pre>
+<pre><code>##    user  system elapsed 
+##  15.371  30.326   5.832</code></pre>
+<pre class="r"><code>system.time(lm_local_Rcpp(y,x0,X0,x,X,H))</code></pre>
+<pre><code>##    user  system elapsed 
+##  21.104   2.353   3.042</code></pre>
+<p>To perform weighted least squares, we simply define <span class="math inline">\(\tilde{X}=\sqrt{w}X\)</span> and <span class="math inline">\(\tilde{y}=\sqrt{w}y\)</span> and fit the linear model as before.</p>
+<!-- ```{r} -->
+<!-- lm(y~X-1, weights = w) -->
+<!-- X_tilde <- sqrt(w)*X -->
+<!-- y_tilde <- sqrt(w)*y -->
+<!-- lm(y_tilde~X_tilde-1) -->
+<!-- lm_chol_r(X_tilde,y_tilde) -->
+<!-- ``` -->

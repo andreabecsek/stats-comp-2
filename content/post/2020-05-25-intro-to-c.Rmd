@@ -400,6 +400,3 @@ int main(){
 ```
 
 We have create two `Square` objects with different side lengths and printed their areas computed using the `area` method.
-
-
-

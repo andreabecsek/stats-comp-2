@@ -21,6 +21,17 @@ set.seed(123) # load dataset solar &amp;lt;- readRDS(&amp;#39;../data/solarAU.RD
     </item>
     
     <item>
+      <title>Intro to Linux</title>
+      <link>/post/intro-to-linux/</link>
+      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/intro-to-linux/</guid>
+      <description>Linux is a open-source version of the UNIX operating system.
+ Kernel: heart of the operating system and manages everything from memory to hardware devices. Shell: interface between the user and the kernel. There are different types of shells, for example Bourne shell (sh) and Bourne Again Shell (bash) etc.  Users First of all, since linux is a multiuser system, we might want to check the following:
+ who you are logged in as using whoami who else is logged in: users or who for more details   File management All the data is organized into files and directories, all of which are organized into a tree structure.</description>
+    </item>
+    
+    <item>
       <title>Intro to C&#43;&#43;</title>
       <link>/post/intro-to-c/</link>
       <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>

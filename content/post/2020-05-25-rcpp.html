@@ -85,8 +85,6 @@ NumericVector meanKRS_cpp(const NumericVector y, const NumericVector x, const Nu
     return out;
 }</code></pre>
 <p>Source the file containing the function above.</p>
-<pre class="r"><code>getwd()</code></pre>
-<pre><code>## [1] &quot;/home/work/Documents/stats-comp-2/content/post&quot;</code></pre>
 <pre class="r"><code>sourceCpp(&quot;../code/meanKRS.cpp&quot;)</code></pre>
 <p>Fit the data using the <code>C</code> function.</p>
 <pre class="r"><code>muSmoothLargeRcpp &lt;- meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06)
@@ -99,12 +97,12 @@ muSmoothSmallRcpp &lt;- meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.02)</code>
 <p>Compare the efficiency of the two functions and note that the <code>Rcpp</code> implementation is about <span class="math inline">\(1.5\)</span> times faster.</p>
 <pre class="r"><code>microbenchmark(meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), meanKRS(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
-##                                               expr      min       lq    mean
-##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.00000
-##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.513326 1.529837 1.53695
-##    median       uq     max neval cld
-##  1.000000 1.000000 1.00000   100  a 
-##  1.521242 1.572983 1.35941   100   b</code></pre>
+##                                               expr      min       lq     mean
+##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
+##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.500849 1.509759 1.506717
+##    median       uq      max neval cld
+##  1.000000 1.000000 1.000000   100  a 
+##  1.522478 1.523124 1.553303   100   b</code></pre>
 </div>
 <div id="q1b" class="section level3">
 <h3>Q1b</h3>
@@ -359,12 +357,12 @@ NumericVector varKRS_cpp(const NumericVector y, const NumericVector x, const Num
 <p>Comparing the performances it is clear that the <code>C</code> implementation is faster.</p>
 <pre class="r"><code>microbenchmark(varKRS(y = y, x = x, x0 = x_new, lam = 0.06), varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
-##                                              expr     min       lq     mean
-##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.51317 1.522218 1.574042
-##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.00000 1.000000 1.000000
-##   median       uq      max neval cld
-##  1.54639 1.492824 4.620658   100   b
-##  1.00000 1.000000 1.000000   100  a</code></pre>
+##                                              expr      min       lq    mean
+##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.522923 1.574803 1.59361
+##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.00000
+##    median       uq      max neval cld
+##  1.534016 1.597117 3.914591   100   b
+##  1.000000 1.000000 1.000000   100  a</code></pre>
 <p>Perform cross validation using <code>R</code></p>
 <pre class="r"><code>cv_error_var &lt;- function(y, x, lambdas, k = 10) {
   # define error metric

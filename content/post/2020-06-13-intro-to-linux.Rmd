@@ -1,0 +1,212 @@
+---
+title: Intro to Linux
+author: ''
+date: '2020-06-13'
+slug: intro-to-linux
+categories: []
+tags:
+  - linux
+  - bash
+---
+
+
+Linux is a open-source version of the UNIX operating system. 
+
+* Kernel: heart of the operating system and manages everything from memory to hardware devices.
+* Shell: interface between the user and the kernel. There are different types of shells, for example Bourne shell (sh) and Bourne Again Shell (bash) etc.
+
+
+## Users
+First of all, since linux is a multiuser system, we might want to check the following:
+
+* who you are logged in as using `whoami`
+* who else is logged in: `users` or `who` for more details
+
+
+![](/post/2020-06-13-intro-to-linux_files/who.png)
+
+## File management
+All the data is organized into files and directories, all of which are organized into a tree structure. 
+
+##### List Files
+
+To list the files in a directory use `ls`, which by default lists  by alphabetical order. There are various attributes that can be used with `ls`, for example
+
+* `ls -t`: list files based on the time they were last changed
+* `ls -r`: list in reverse order
+* `ls -l`: list files with more information such as file type, permission, size etc.
+* `ls -a`: list all files, including the invisible ones whose file name starts with a dot.
+* `ls -r`: list files
+
+##### Create files
+
+Files can be created using a text editor, such as *vim*. 
+
+* create file: `touch file_name.txt`
+* edit file: `vim file_name.txt`
+* enter editing mode by pressing `i` on the keyboard
+* exit editing mode using `Esc`
+* close and save file by typing `:wq`
+
+##### Examine file content
+
+* display file content: `cat file_name` (use `cat -b` to add line numbers)
+* display first 5 lines of a file: `head -n5 file_name`. The default number of lines to be displayed is $10$.
+* display the last 7 lines of a file: `tail -n7 file_name`.
+* display lines, words, size (in bytes), and filename of a file: `wc file_name`. This can be done for multiple files at the same time.
+
+##### Wildcards
+
+Wildcards are used when we want to perform some operation on multiple files at the same time. Two wildcards:
+
+* `?`: represents a single character
+* `*`: represents zero or more characters.
+
+Say we want to find all files with a `.pdf` extension. Then we can use `*.pdf`.
+
+## Directory management
+
+* current folder: `pwd`
+* change directory: `cd foldername`
+* go to parent directory:`cd ..`
+* go to home directory: `cd` or `cd ~`
+* go to root directory: `cd /` (one directory to rule them all). Paths starting with `/` are absolute, and those without are relative to the directory the we are currently in.
+* make new directory: `mkdir`
+* rename directory: `mv old_dir new_dir`
+
+## Getting help
+
+* `man command_name`: get description of a command in the terminal (or similarly `command_name --help`)
+* `whatis command_name`: single-line description of the command
+
+## File and Folder Actions
+
+##### Copy, rename, delete:
+
+* copy file from one directory to another: `cp source_dir destination_dir`
+* copy folder into another directory: `cp -r source_dir destination_dir`
+* make copy of a file: `cp original_file copy_file`
+* rename file or folder: `mv old_name new_name`
+* delete file: `rm file_name`
+* delete entire directory `rm -r directory_name`
+
+
+## Operations and Pipes
+
+##### Find
+
+* `find . file_name`: search entire folder that you are in for a specific file
+* `find . -name *.pdf`: find all `.pdf` files. Can be used with any extension and pattern in the file nam.
+* `find . file_name -exec '{}' \;`: once the file is found we execute the `rm` command on the file. Can beused with various commands.
+
+##### Sort
+
+* sort contents of a file alphabetically: `sort file_name`
+* sort contents of a file numerically: `sort -n file_name`
+
+##### Redirecting
+We can perform a command and redirect is to
+
+* the same file: `command file_name > file_name` (not recommended as it overwrites)
+* a different file: `command file_name >> different_file` (appends at the end of the file)
+
+##### Pipes
+The pipe operator `|` takes the output of the command on the left and uses it as an input for the command on the right.
+
+For example, to get the 5 lowest numbers in a file we can do
+
+`sort -n file_name.txt | head -n5`
+
+## Shell scripts
+
+* create a shell script: `touch script.sh`
+* run script using: `bash script.sh`
+
+
+# Application
+
+We are going to pick $4$ books from Project Gutenberg and perform a very basic text analysis using bash.
+
+To download the files we use `wget`, which is a utility specifically designed for extracting files from the web.
+
+First, make a directory where to place the files. Then, we create an input file that will contains the URLs from where we want to download from.
+
+![](/post/2020-06-13-intro-to-linux_files/create_books_dir.png)
+
+Now, we use `wget` as follows to download the `.txt` files recursively from the given URLs.
+
+![](/post/2020-06-13-intro-to-linux_files/wget.png)
+
+And now, as it can be seen we have the four books in separate directories, which contain the needed files and some additional files too.
+
+![](/post/2020-06-13-intro-to-linux_files/explore_dir.png)
+
+These are all the text files in the directory.
+
+![](/post/2020-06-13-intro-to-linux_files/all_txt_files.png)
+
+Remove all the old versions of the files
+
+![](/post/2020-06-13-intro-to-linux_files/remove_old.png)
+
+And we are left with 
+
+![](/post/2020-06-13-intro-to-linux_files/filess.png)
+
+Now copy all the files into the main `books` directory. To do so we find all the remaining `.txt` files and then we execute the `cp` command to copy the files into the current directory using:
+
+![](/post/2020-06-13-intro-to-linux_files/all_in_books.png)
+
+After removing the unnecessary folders we are left with:
+
+![](/post/2020-06-13-intro-to-linux_files/the_4.png)
+
+Let's see the first line of each file
+![](/post/2020-06-13-intro-to-linux_files/first_lines.png)
+
+<!-- We are going to rename each file according to the name of the book that is mentioned in the first line of the file. -->
+
+Count the number of words in each file and sort them in ascending order. Note that we have finally renamed our files with their corresponding titles.
+
+![](/post/2020-06-13-intro-to-linux_files/rename.png)
+
+Now, we want to reduce the text to a list of words using
+
+`cat file.txt | tr " " "\n" | tr -d '[:punct:] | tr '[:upper:]' '[:lower:]`
+
+* `cat`: read the file
+* `tr " " "\n"`: translate all the spaces to new lines
+* `tr -d '[:punct:]'`: delete the punctuation marks
+* `tr '[:upper:]' '[:lower:]'`: convert everything to lowercase
+
+To see the $10$ most used words we can append the pipe with `| sort | uniq -c| sort -n | tail -n 10`.
+
+![](/post/2020-06-13-intro-to-linux_files/words_count.png)
+
+But note that there are many words that do not tell us much about the content, such as prepositions, conjuctions etc. So we use a list of stop words to remove all these words. So applying our final expression to one of the files, we obtain the following
+
+![](/post/2020-06-13-intro-to-linux_files/count_without_stop_words.png)
+
+Given that this is a play, it makes sense that the most used words are the characters' names.
+
+Now we want to apply this analysis to every file and store the results in different files. For this we create the following bash script:
+
+![](/post/2020-06-13-intro-to-linux_files/word_count_sh.png)
+
+After running it we obtain the new files that contain the most used words
+
+![](/post/2020-06-13-intro-to-linux_files/count_files_emerge.png)
+
+And the final results look are the following
+![](/post/2020-06-13-intro-to-linux_files/results.png)
+
+The conclusion that we can draw is that doing this sort of basic analysis at most provides the names of the main characters, and various other common words, that don't necessarily tell us a huge deal about the stories. 
+
+This just proves the point that any complicated analysis is not to be done in bash because its main role is to act as a glue that holds our workflow together by enabling us to do quick and easy file manipulations.
+
+
+
+
+
+
+

@@ -1,7 +1,7 @@
 #include <Rcpp.h>
-#include <Rmath.h>
-#include <algorithm>
-#include <random> 
+//#include <Rmath.h>
+//#include <algorithm>
+//#include <random> 
 using namespace Rcpp;
 
 // [[Rcpp::export(name = "meanKRS_cpp")]]

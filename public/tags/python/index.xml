@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on Statistical Computing 2 Portfolio</title>
+    <link>/tags/python/</link>
+    <description>Recent content in python on Statistical Computing 2 Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Deep Learning</title>
+      <link>/post/deep-learning/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/deep-learning/</guid>
+      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.
+The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
+    </item>
+    
+    <item>
+      <title>Parallel Python</title>
+      <link>/post/parallel-python/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/parallel-python/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

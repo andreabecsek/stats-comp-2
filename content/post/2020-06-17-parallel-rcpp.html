@@ -1,0 +1,44 @@
+---
+title: Parallel Rcpp
+author: ''
+date: '2020-06-17'
+slug: parallel-rcpp
+categories: []
+tags: []
+---
+
+
+
+<div id="rcpp-parallel" class="section level2">
+<h2>Rcpp Parallel</h2>
+<pre class="r"><code>library(Rcpp)</code></pre>
+<p>Consider a simple scenario. We want to flip <span class="math inline">\(100\)</span> coins and get an estimate of the mean.
+We can do this in R</p>
+<pre class="r"><code>mean(rbinom(100, 1, 0.5))</code></pre>
+<pre><code>## [1] 0.55</code></pre>
+<p>We can do this using</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;Rcpp.h&gt;
+using namespace Rcpp;
+
+int flip_coin(){
+  int n = rand() % 2;
+  return n;
+}
+
+//[[Rcpp::export(mean_flips)]]
+NumericVector coin()
+{
+  NumericVector out(100);
+  for(i=0; i&lt;100; i++)
+  {
+    out[i] = flip_coin
+  }
+  return out;
+}</code></pre>
+<pre class="r"><code>sourceCpp(&quot;../code/coin_rcpp.cpp&quot;)</code></pre>
+<pre class="r"><code>mean_flips()</code></pre>
+<pre><code>##   [1] 0 0 0 1 1 0 1 0 0 0 1 1 0 0 0 1 1 0 0 1 1 1 0 1 0 0 0 1 0 1 0 0 1 0 1 0 0
+##  [38] 1 1 0 1 0 1 1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 1 1 1 1 0 0 1 1 1 1 0 0 1 0 0 0
+##  [75] 1 0 1 0 0 0 0 0 1 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 0</code></pre>
+</div>

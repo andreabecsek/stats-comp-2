@@ -1,0 +1,10 @@
+---
+title: Parallel Python
+author: ''
+date: '2020-06-17'
+slug: parallel-python
+categories: []
+tags:
+  - python
+  - parallel
+---

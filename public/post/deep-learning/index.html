@@ -1,0 +1,295 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Andrea Becsek">
+    <meta name="description" content="Portfolio for Statistical Computing 2.">
+    <meta name="keywords" content="">
+    <meta name="generator" content="Hugo 0.71.0" />
+    <title> Deep Learning | Statistical Computing 2 Portfolio</title>
+    <meta name="description" content="Deep Learning - Portfolio for Statistical Computing 2.">
+    <meta itemprop="name" content="Deep Learning">
+    <meta itemprop="description" content="Deep Learning - Portfolio for Statistical Computing 2.">
+    <meta property="og:title" content="Deep Learning">
+    <meta property="og:description" content="Deep Learning - Portfolio for Statistical Computing 2.">
+    <meta property="og:image" content="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?size=200">
+    <meta property="og:url" content="/post/deep-learning/">
+    <meta property="og:site_name" content="Statistical Computing 2 Portfolio">
+    <meta property="og:type" content="article">
+
+    
+
+
+    
+    <link href="/post/deep-learning/" rel="alternate" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    <link href="/post/deep-learning/" rel="feed" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    
+
+    
+
+    <link rel="stylesheet" href="/theme.css">
+
+    
+
+    
+    
+    
+</head>
+
+<body class="bilberry-hugo-theme">
+
+    
+    <nav>
+
+    <div class="container">
+        <ul class="topnav">
+            
+            
+            <li><a href="/page/about-bilberry/">About Bilberry</a></li>
+            
+            
+            
+            <li><a href="https://github.com/Lednerb/bilberry-hugo-theme" target="_blank">Github</a></li>
+            
+            
+        </ul>
+
+        
+    </div>
+</nav>
+
+
+    
+<header>
+
+    <div class="container">
+        <div class="logo">
+            <a id="siteBaseUrl" href="/" class="logo">
+                
+                <img src="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?d=mm&size=200" alt="">
+                
+
+                <span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title"><a
+                    href="/">Statistical Computing 2 Portfolio</a></h3>
+            
+            <span class="subtitle">Andrea Becsek</span>
+            
+        </div>
+
+        
+
+        
+            <div class="toggler">
+                
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+        </div>
+</header>
+
+
+    <div class="main container">
+        
+     
+    <div class="article-wrapper u-cf single">
+        
+            <a class="bubble" href="/post/deep-learning/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article">
+    
+
+    <div class="content">
+    <h1 class="article-title"><a href="/post/deep-learning/">Deep Learning</a></h1>
+    <div class="meta">
+        
+        
+        <span class="date moment">2020-06-17</span>
+        
+        
+
+        
+
+        
+
+        
+        <span class="author">
+            
+            
+            <a href="/author/andrea-becsek/">Andrea Becsek</a>
+            
+        </span>
+        
+    </div>
+
+    
+    
+
+
+<div id="introduction-to-neural-networks" class="section level2">
+<h2>Introduction to Neural Networks</h2>
+<p>Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.</p>
+The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.
+<center>
+<img src="/post/2020-06-17-deep-learning_files/nn.png" width="300" height="200" />
+</center>
+<p>Breaking it down, every neuron receives a set of inputs, which are weighted, summed and passed through an activation function, often a sigmoid.</p>
+<p>We are going to run through a small example using the fashion MNIST database, which contains greyscale images of various fashion items.</p>
+<p>For this purpose we are going to use Tensorflow and Keras.</p>
+<p>Let’s break it down step by step. We first import <code>Tensorflow</code>, load the training and test datasets from the library.</p>
+<pre class="python"><code>import tensorflow as tf
+
+# Load data
+dataset = tf.keras.datasets.fashion_mnist.load_data()
+(x_train, y_train) = dataset[0]
+(x_test, y_test) = dataset[1]</code></pre>
+<p>The labels at the moment take the form of <span class="math inline">\(10\)</span> different strings. To make the labels easier to work with, we use one hot encoding.</p>
+<pre class="python"><code># Convert labels using one hot encoding
+y_train = tf.keras.utils.to_categorical(y_train)
+y_test = tf.keras.utils.to_categorical(y_test)</code></pre>
+<p>Now, our images are in 2D, so we need to flatten them into 1D arrays</p>
+<pre class="python"><code># Convert input images to 1D
+x_train = x_train.reshape(x_train.shape[0], -1) /255
+x_test = x_test.reshape(x_test.shape[0], -1) /255</code></pre>
+<p>We use a Neural Network with a single hidden layer to begin with. We set the number of neurons in the hidden layer to be <code>8</code> and the number of classes is known and must be set to <code>10</code>. We initialize the model, add the hidden layer, and then add the output layer as follows</p>
+<pre class="python"><code># Use a sequential model
+model = tf.keras.models.Sequential()
+
+# First hidden layer with 8 neurons
+n_neurons = 8
+n_classes = 10
+model.add(tf.keras.layers.Dense(n_neurons, input_dim=784, activation=&#39;relu&#39;))
+
+# Add output layer
+model.add(tf.keras.layers.Dense(n_classes, activation=&#39;softmax&#39;))</code></pre>
+<p>We must describe the specifics of training the model. The optimiser that we use is <code>adam</code>, the <code>categorical_crossentropy</code> loss function computes the cross-entropy between the predicted and actual class labels.</p>
+<pre class="python"><code># Specify how to train model
+model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=&#39;adam&#39;, metrics=&#39;accuracy&#39;)</code></pre>
+<p>Finally, we fit the model using a 30/70 validation split and <code>5</code> epochs. An epoch is a breakdown of the data that can be passed through the model one batch at a time until the entire training dataset has been seen once. However, we are exposing the network to the entire dataset <code>5</code> times in this case so it gets to know it better.</p>
+<pre class="python"><code># Fit model
+n_epochs=5
+model.fit(x_train, y_train, epochs=n_epochs, validation_split=0.3)</code></pre>
+<p>Let’s see how the model performs on the training data
+<img src="/post/2020-06-17-deep-learning_files/epochs.png" /></p>
+<p>After the final epoch, we see that the accuracy is at around <code>83.6%</code>, which is pretty good.</p>
+<p>How about the performance on the test set? <code>82.22%</code>. That is still not bad given how basic this implementation is.</p>
+<pre class="python"><code>model.evaluate(x_test,y_test)[1]</code></pre>
+<p><img src="/post/2020-06-17-deep-learning_files/final_acc.png" /></p>
+</div>
+
+    
+</div>
+
+    
+<div class="footer">
+
+
+    
+        <div class="tags">
+            <i class="fa fa-tags"></i>
+            <div class="links">
+                
+                    
+                    
+                    <a href="/tags/python/">python</a>
+                    
+                
+                    
+                    
+                    <a href="/tags/tensorflow/">tensorflow</a>
+                    
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+</article>
+
+        
+    </div>
+
+    
+        <div id="comments-container">
+            
+            
+
+        </div>
+    
+
+     
+
+    </div>
+
+    
+<footer>
+    <div class="container">
+
+        
+
+        
+
+        <div class="right">
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+
+<div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/Lednerb" target="_blank">
+                &copy;
+                
+                2017
+                
+                by Lednerb
+            </a>
+            
+        </div>
+        <div class="author">
+            <a href="https://github.com/Lednerb/bilberry-hugo-theme"
+                target="_blank">Bilberry Hugo Theme</a>
+        </div>
+    </div>
+</div>
+
+
+    
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+</script>
+
+    
+
+
+    <script type="text/javascript" src="/theme.js"></script>
+
+    
+    
+    
+
+    
+
+
+</body>
+
+</html>

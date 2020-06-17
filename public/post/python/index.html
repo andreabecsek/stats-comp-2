@@ -1,0 +1,401 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Andrea Becsek">
+    <meta name="description" content="Portfolio for Statistical Computing 2.">
+    <meta name="keywords" content="">
+    <meta name="generator" content="Hugo 0.71.0" />
+    <title> Python | Statistical Computing 2 Portfolio</title>
+    <meta name="description" content="Python - Portfolio for Statistical Computing 2.">
+    <meta itemprop="name" content="Python">
+    <meta itemprop="description" content="Python - Portfolio for Statistical Computing 2.">
+    <meta property="og:title" content="Python">
+    <meta property="og:description" content="Python - Portfolio for Statistical Computing 2.">
+    <meta property="og:image" content="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?size=200">
+    <meta property="og:url" content="/post/python/">
+    <meta property="og:site_name" content="Statistical Computing 2 Portfolio">
+    <meta property="og:type" content="article">
+
+    
+
+
+    
+    <link href="/post/python/" rel="alternate" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    <link href="/post/python/" rel="feed" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    
+
+    
+
+    <link rel="stylesheet" href="/theme.css">
+
+    
+
+    
+    
+    
+</head>
+
+<body class="bilberry-hugo-theme">
+
+    
+    <nav>
+
+    <div class="container">
+        <ul class="topnav">
+            
+            
+            <li><a href="/page/about-bilberry/">About Bilberry</a></li>
+            
+            
+            
+            <li><a href="https://github.com/Lednerb/bilberry-hugo-theme" target="_blank">Github</a></li>
+            
+            
+        </ul>
+
+        
+    </div>
+</nav>
+
+
+    
+<header>
+
+    <div class="container">
+        <div class="logo">
+            <a id="siteBaseUrl" href="/" class="logo">
+                
+                <img src="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?d=mm&size=200" alt="">
+                
+
+                <span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title"><a
+                    href="/">Statistical Computing 2 Portfolio</a></h3>
+            
+            <span class="subtitle">Andrea Becsek</span>
+            
+        </div>
+
+        
+
+        
+            <div class="toggler">
+                
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+        </div>
+</header>
+
+
+    <div class="main container">
+        
+     
+    <div class="article-wrapper u-cf single">
+        
+            <a class="bubble" href="/post/python/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article">
+    
+
+    <div class="content">
+    <h1 class="article-title"><a href="/post/python/">Python</a></h1>
+    <div class="meta">
+        
+        
+        <span class="date moment">2020-06-17</span>
+        
+        
+
+        
+
+        
+
+        
+        <span class="author">
+            
+            
+            <a href="/author/andrea-becsek/">Andrea Becsek</a>
+            
+        </span>
+        
+    </div>
+
+    
+    
+
+
+<p>We are going to focus on objected oriented programming with Python. We have already talked about the main concepts of OOP and seen how they work in R. To make the transition easier, we are going to follow a similar structure to the in the R OOP portfolio.</p>
+<div id="create-class-with-constructor" class="section level4">
+<h4>Create class with constructor</h4>
+<p>We start by creating a Shape class and initialize it with the variable <code>side_lengths</code> and <code>name</code>.</p>
+<pre class="python"><code>import numpy as np
+
+class Shape:
+    def __init__(self, name, side_lengths):
+        self.name = name
+        self.side_lengths = np.array(side.lengths)</code></pre>
+<ul>
+<li><code>__init__</code> function: constructor of the class. It sets the initial state of the object.</li>
+<li><code>self</code>: special variable which provides access to the properties of an object.</li>
+</ul>
+<p>We can create an object from the Shape class by using</p>
+<pre class="python"><code>triangle = Shape(&#39;baby_triangle&#39;, [1, 1, 1])
+print(triangle.side_lengths)</code></pre>
+</div>
+<div id="class-methods" class="section level4">
+<h4>Class methods</h4>
+<p>We often call a function only in a specific setting. This is where classes and methods come in handy. If we want a function to find the perimeter of a shape, it makes sense to link this somehow to the Shape class, as all the objects that we will call it in belong to that class.</p>
+<p>We can define the perimeter method by adding it inside the class. This ensures that it can only be called on instances of that specific class.</p>
+<pre class="python"><code>class Shape:
+    def __init__(self, name, side_lengths):
+        self.side_lengths = np.array(side_lengths)
+        self.name = name
+
+    def perimeter(self):
+        return sum(self.side_lengths)</code></pre>
+<p>Another important role of methods is that it enables one to update the state of one or more attributes. For example, say we want to increase the side lengths of an already existing shape by 1. We can do this using this method</p>
+<pre class="python"><code>    def increase(self):
+        print(f&quot;You increased the sides of the {self.name} by 1.&quot;)
+        self.side_lengths = self.side_lengths + 1</code></pre>
+</div>
+<div id="implementation-of-gaussian-processes" class="section level2">
+<h2>Implementation of Gaussian Processes</h2>
+<p>We first create a Kernel class that enables us to define the parameters to be used in the Gaussian kernel. The class also has a method to compute the covariance matrix based on the inputed vectors.</p>
+<pre class="python"><code>import numpy as np
+import matplotlib.pyplot as plt
+class Kernel:
+    &quot;&quot;&quot;
+    A class used to define a specific Gaussian Kernel.
+
+    ...
+
+    Attributes
+    ----------
+    l : float
+        length parameter
+    sigma: float
+        variance parameter
+    X1 : list
+        first input vector
+    X2 : list
+        second input vector
+
+    Methods
+    -------
+    covariance()
+        computes the covariance matrix using the gaussian kernel function
+    &quot;&quot;&quot;
+    
+    # constructor
+    def __init__(self, l, sigma, X1, X2):
+        # convert to numpy column vector
+        self.X1 = np.array(X1).reshape(-1, 1)
+        self.X2 = np.array(X2).reshape(-1, 1)
+        self.l = l
+        self.sigma = sigma
+
+    # covariance method
+    def covariance(self):
+        n1 = self.X1.shape[0]
+        n2 = self.X2.shape[0]
+        cov = np.zeros(shape=(n1, n2))
+
+        for i in range(0, n1):
+            for j in range(0, n2):
+                cov[i, j] = (self.sigma ** 2 * np.exp(
+                -0.5 * np.linalg.norm(self.X1[i, :] - self.X2[j, :])** 2 
+                / (self.l ** 2)))
+                
+        return cov
+</code></pre>
+<p>We can create a Kernel with length parameter <code>l=6</code> and variance parameter <code>sigma=1</code>. If we then plot the resulting covariance matrix between two vectors spanning from <code>-10</code> to <code>10</code>.</p>
+<pre class="python"><code>test_kernel = Kernel(6, 1, np.linspace(-10, 10, 20), np.linspace(-10, 10, 20))
+# resulting covariance matrix
+test_kernel.covariance()</code></pre>
+<p>To visualize the resulting covariance matrix we used</p>
+<pre class="python"><code>plt.clf()
+plt.imshow(test_kernel.covariance())
+plt.show()</code></pre>
+<p><img src="/post/2020-06-17-python_files/kernel.png" /></p>
+<p>The second class that we use is a Gaussian Process class. The way the class works is that we can initialize an initial <code>gp</code> object with a given kernel and the test x values, and then we can update it once we have some training values.</p>
+<pre class="python"><code>class Gp:
+    &quot;&quot;&quot;
+    A class for working with Gaussian Processes.
+
+    ...
+
+    Attributes
+    ----------
+    x_new: list
+        values used as test inputs (the range of interest)
+    kernel: Kernel
+        a kernel object
+    n_samples: int
+        samples to be drawn
+    samples:
+        samples drawn from a multivariate normal based on the mean and covariance
+    mu:
+        mean of the normal distribution used to obtain samples
+
+    Methods
+    -------
+    get_samples():
+        draws samples from a multivariate normal
+    train(x_train, y_train):
+        updates the mean and covariance and draws new samples
+    plot():
+        create a line plot of the current samples
+    &quot;&quot;&quot;
+    def __init__(self, x_new, kernel, n_samples, samples=None, mu=None):
+        self.x_new = x_new
+        self.kernel = kernel
+        self.n_samples = n_samples
+        self.samples = [] if samples is None else samples
+        self.mu = np.zeros(shape=(1, x_new.shape[0])).ravel() if samples is None else mu
+
+    def get_samples(self):
+        n = self.x_new.shape[0]
+        current_kernel = Kernel(self.kernel.l, self.kernel.sigma, self.x_new, self.x_new)
+        current_covariance = current_kernel.covariance()
+        self.samples = np.zeros(shape=(n, self.n_samples))
+        for i in range(0, self.n_samples):
+            self.samples[:, i] = np.random.multivariate_normal(self.mu, current_covariance)
+
+    def train(self, x_train, y_train):
+        K_11 = Kernel(self.kernel.l, self.kernel.sigma, x_train, x_train)
+        K_12 = Kernel(self.kernel.l, self.kernel.sigma, x_train, self.x_new)
+        K_22 = Kernel(self.kernel.l, self.kernel.sigma, self.x_new, self.x_new)
+        sigma_11 = K_11.covariance()
+        sigma_22 = K_22.covariance()
+        sigma_12 = K_12.covariance()
+        
+        cov = sigma_22 - sigma_12.transpose().dot(np.linalg.inv(sigma_11)).dot(sigma_12)
+        self.mu = np.matmul(np.matmul(sigma_12.transpose(), np.linalg.inv(sigma_11)), y_train)
+        
+        n = self.x_new.shape[0]
+        self.samples = np.zeros(shape=(n, self.n_samples))
+
+        for i in range(0, self.n_samples):
+            self.samples[:, i] = np.random.multivariate_normal(self.mu.ravel(), cov)
+            print(self.samples[:, i])
+
+    def plot(self):
+        for i in range(0, self.n_samples):
+            plt.plot(self.x_new, self.samples[:, i])
+        plt.show()</code></pre>
+<p>Here we set the x test value, initialize the kernel, and create an initial <code>gp</code> object which represents the prior. We draw samples from the prior using <code>.get_samples</code>, and then we use the plot method to obtain the plot below</p>
+<pre class="python"><code>x = np.linspace(-10, 10, 21)
+init_kernel = Kernel(6, 1, x, x)
+gp = Gp(x, init_kernel, 6)
+gp.get_samples()
+gp.plot()</code></pre>
+<p><img src="/post/2020-06-17-python_files/prior.png" /></p>
+<p>Say we have now observed some training data and want to train the <code>gp</code> object and obtain some new samples. The resulting samples do indeed show no uncertainty around the training points, which is the expected bahaviour.</p>
+<pre class="python"><code>x_train = [-7,-2,5]
+y_train = [-0.5, 1, 0]
+gp.train(x_train, y_train)
+gp.plot</code></pre>
+<p><img src="/post/2020-06-17-python_files/posterior.png" /></p>
+</div>
+
+    
+</div>
+
+    
+<div class="footer no-tags">
+
+
+    
+
+    
+</div>
+
+</article>
+
+        
+    </div>
+
+    
+        <div id="comments-container">
+            
+            
+
+        </div>
+    
+
+     
+
+    </div>
+
+    
+<footer>
+    <div class="container">
+
+        
+
+        
+
+        <div class="right">
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+
+<div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/Lednerb" target="_blank">
+                &copy;
+                
+                2017
+                
+                by Lednerb
+            </a>
+            
+        </div>
+        <div class="author">
+            <a href="https://github.com/Lednerb/bilberry-hugo-theme"
+                target="_blank">Bilberry Hugo Theme</a>
+        </div>
+    </div>
+</div>
+
+
+    
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+</script>
+
+    
+
+
+    <script type="text/javascript" src="/theme.js"></script>
+
+    
+    
+    
+
+    
+
+
+</body>
+
+</html>

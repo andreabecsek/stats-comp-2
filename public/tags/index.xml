@@ -5,7 +5,7 @@
     <link>/tags/</link>
     <description>Recent content in Tags on Statistical Computing 2 Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -13,18 +13,54 @@
     <item>
       <title>bash</title>
       <link>/tags/bash/</link>
-      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/bash/</guid>
       <description></description>
     </item>
     
     <item>
+      <title>hpc</title>
+      <link>/tags/hpc/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/hpc/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>linux</title>
       <link>/tags/linux/</link>
-      <pubDate>Sat, 13 Jun 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>parallel</title>
+      <link>/tags/parallel/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/parallel/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>/tags/python/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>tensorflow</title>
+      <link>/tags/tensorflow/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/tensorflow/</guid>
       <description></description>
     </item>
     

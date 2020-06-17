@@ -1,0 +1,175 @@
+---
+title: Introduction to OpenMP
+author: Andrea Becsek
+date: '2020-06-17'
+slug: introduction-to-openmp
+categories: []
+tags: []
+---
+
+OpenMP is an interface that provides support for parallel programming. 
+
+The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
+
+We wrote the `hello.cpp` code and compiled it.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+int main()
+{       
+        #pragma omp parallel
+        {
+                std::cout << "Hello from OpenMP!\n";
+        }
+
+        return 0;
+}  
+```
+
+Note that we included a single new line, `#pragma omp parallel` which simply mentions that the code between the brackets is what we aim to parallelize.
+
+And we compile the program using
+```{bash eval=FALSE}
+g++ -fopenmp hello_openmp.cpp -o hello_openm
+```
+
+Now, we set the number of threads to $3$ using the `OMP_NUM_THREADS` variable and execute the file. The code has indeed been run $3$ times.
+![](/post/2020-06-17-introduction-to-openmp_files/hellomp.png)
+
+### Directives
+
+In general code is executed one line at a time, beginning with the main function. While usually there is a single main thread, what the `#pragma` commands do is split the given code into multiple threads. Then each thread executes the specified code in parallel. 
+
+The OpenMP library provides the two functions used to identify threads:
+
+* `omp_get_thread_num()`: thread id
+* `omp_get_num_threads()`: total threads
+
+There are different ways to assign threads to tasks, and this is why there are different types of directives:
+
+* `parallel`: execute code in parallel
+* `sections`: run in parallel different sections of the code
+* `for`: tells loops which iterations to assign to different threads
+* `critical`: block of code that is only allowed to be run by one block at a time
+* `reduction`: combine results into one
+
+#### Parallel
+To see how these threads works let's create a program that returns the id of each thread.
+
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+#ifdef _OPENMP
+    #include <omp.h>
+#else
+    #define omp_get_num_threads() 0
+    #define omp_get_thread_num() 0
+#endif
+
+int main(){
+        std::cout << "This is the main thread.\n";
+
+        #pragma omp parallel
+        {
+                int n_threads = omp_get_num_threads();
+                int thread_id = omp_get_thread_num();
+
+                std::cout << "This is thread"
+                        << thread_id 
+                        << "out of" 
+                        << n_threads 
+                        << std::endl;
+        }
+
+        std::cout << "This is the main thread again.\n";
+
+        return 0;
+}
+```
+Note that the `thread_id` and `n_threads` are local variables within the parallelized section. The code is the compiled and ran as previously.
+
+#### Sections
+
+Sections are used to define different sections of the code that can be run in parallel. To see how it works, let's consider a simple example that adds and checks whether the numbers are equal.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+int sum(int a, int b){
+  int c = a + b;
+  return c;
+}
+
+bool is_equal(int a, int b){
+  bool c = (a == b);
+  return c;
+}
+
+int main(){
+  
+  std::cout << "Hello from main thread.\n";
+  
+  #pragma omp parallel
+  {
+    #pragma omp sections
+    {
+      #pragma omp section
+      {
+        sum(2,4);
+      }
+      #pragma omp section
+      {
+        is_equal(2,4);
+      }
+    }
+  }
+  return 0;
+}
+```
+
+Compiling and executing this code has actually no return. It is purely for demonstrative purposes.
+
+<!-- #### Loops -->
+<!-- We very often run a large number of iterations within a loop. If these iterations are independent of each other we can use the `for` directive to split the iterations between the assigned threads. -->
+
+
+#### Reductions
+
+Reductions combine multiple subcalculations into one after every calculations. This way we don't have to store all the results until the end.
+
+Let's estimate the mean of $100$ coin flips.
+```{Rcpp eval=FALSE}
+#include <iostream>
+
+#ifdef _OPENMP
+    #include <omp.h>
+#else
+    #define omp_get_thread_num() 0
+#endif
+
+int flip_coin(){
+        int n = rand() % 2;
+        return n;
+}
+
+int main(){
+        int count = 0;
+        #pragma omp parallel reduction( + : count )
+        {
+                int private_count = 0;
+
+                #pragma omp for
+                for (int i=0; i<100; i++)
+                {
+                        int flip = flip_coin();
+
+                        if (flip == 1)
+                        {
+                                ++private_count;
+                        }
+                }
+                count += private_count;
+        }
+                std::cout << "Estimated mean of 100 coin flips is: " << count/double(100) <<"\n";
+        return 0;
+}
+```

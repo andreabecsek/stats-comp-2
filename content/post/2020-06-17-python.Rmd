@@ -1,0 +1,217 @@
+---
+title: Python
+author: Andrea Becsek
+date: '2020-06-17'
+slug: python
+categories: []
+tags: []
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, python.reticulate=FALSE)
+```
+
+
+We are going to focus on objected oriented programming with Python. We have already talked about the main concepts of OOP and seen how they work in R. To make the transition easier, we are going to follow a similar structure to the in the R OOP portfolio.
+
+#### Create class with constructor
+
+We start by creating a Shape class and initialize it with the variable `side_lengths` and `name`.
+
+```{python eval=FALSE}
+import numpy as np
+
+class Shape:
+    def __init__(self, name, side_lengths):
+        self.name = name
+        self.side_lengths = np.array(side.lengths)
+```
+
+* `__init__` function: constructor of the class. It sets the initial state of the object.
+* `self`: special variable which provides access to the properties of an object. 
+
+We can create an object from the Shape class by using
+
+```{python eval=FALSE}
+triangle = Shape('baby_triangle', [1, 1, 1])
+print(triangle.side_lengths)
+```
+
+#### Class methods
+We often call a function only in a specific setting. This is where classes and methods come in handy. If we want a function to find the perimeter of a shape, it makes sense to link this somehow to the Shape class, as all the objects that we will call it in belong to that class.
+
+We can define the perimeter method by adding it inside the class. This ensures that it can only be called on instances of that specific class.
+```{python eval=FALSE}
+class Shape:
+    def __init__(self, name, side_lengths):
+        self.side_lengths = np.array(side_lengths)
+        self.name = name
+
+    def perimeter(self):
+        return sum(self.side_lengths)
+```
+
+Another important role of methods is that it enables one to update the state of one or more attributes. For example, say we want to increase the side lengths of an already existing shape by 1. We can do this using this method
+```{python eval=FALSE}
+    def increase(self):
+        print(f"You increased the sides of the {self.name} by 1.")
+        self.side_lengths = self.side_lengths + 1
+```
+
+## Implementation of Gaussian Processes
+
+We first create a Kernel class that enables us to define the parameters to be used in the Gaussian kernel. The class also has a method to compute the covariance matrix based on the inputed vectors.
+```{python eval=FALSE}
+import numpy as np
+import matplotlib.pyplot as plt
+class Kernel:
+    """
+    A class used to define a specific Gaussian Kernel.
+
+    ...
+
+    Attributes
+    ----------
+    l : float
+        length parameter
+    sigma: float
+        variance parameter
+    X1 : list
+        first input vector
+    X2 : list
+        second input vector
+
+    Methods
+    -------
+    covariance()
+        computes the covariance matrix using the gaussian kernel function
+    """
+    
+    # constructor
+    def __init__(self, l, sigma, X1, X2):
+        # convert to numpy column vector
+        self.X1 = np.array(X1).reshape(-1, 1)
+        self.X2 = np.array(X2).reshape(-1, 1)
+        self.l = l
+        self.sigma = sigma
+
+    # covariance method
+    def covariance(self):
+        n1 = self.X1.shape[0]
+        n2 = self.X2.shape[0]
+        cov = np.zeros(shape=(n1, n2))
+
+        for i in range(0, n1):
+            for j in range(0, n2):
+                cov[i, j] = (self.sigma ** 2 * np.exp(
+                -0.5 * np.linalg.norm(self.X1[i, :] - self.X2[j, :])** 2 
+                / (self.l ** 2)))
+                
+        return cov
+
+```
+
+We can create a Kernel with length parameter `l=6` and variance parameter `sigma=1`. If we then plot the resulting covariance matrix between two vectors spanning from `-10` to `10`. 
+```{python eval=FALSE}
+test_kernel = Kernel(6, 1, np.linspace(-10, 10, 20), np.linspace(-10, 10, 20))
+# resulting covariance matrix
+test_kernel.covariance()
+```
+
+To visualize the resulting covariance matrix we used
+```{python eval=FALSE}
+plt.clf()
+plt.imshow(test_kernel.covariance())
+plt.show()
+```
+
+![](/post/2020-06-17-python_files/kernel.png)
+
+The second class that we use is a Gaussian Process class. The way the class works is that we can initialize an initial `gp` object with a given kernel and the test x values, and then we can update it once we have some training values.
+```{python eval=FALSE}
+class Gp:
+    """
+    A class for working with Gaussian Processes.
+
+    ...
+
+    Attributes
+    ----------
+    x_new: list
+        values used as test inputs (the range of interest)
+    kernel: Kernel
+        a kernel object
+    n_samples: int
+        samples to be drawn
+    samples:
+        samples drawn from a multivariate normal based on the mean and covariance
+    mu:
+        mean of the normal distribution used to obtain samples
+
+    Methods
+    -------
+    get_samples():
+        draws samples from a multivariate normal
+    train(x_train, y_train):
+        updates the mean and covariance and draws new samples
+    plot():
+        create a line plot of the current samples
+    """
+    def __init__(self, x_new, kernel, n_samples, samples=None, mu=None):
+        self.x_new = x_new
+        self.kernel = kernel
+        self.n_samples = n_samples
+        self.samples = [] if samples is None else samples
+        self.mu = np.zeros(shape=(1, x_new.shape[0])).ravel() if samples is None else mu
+
+    def get_samples(self):
+        n = self.x_new.shape[0]
+        current_kernel = Kernel(self.kernel.l, self.kernel.sigma, self.x_new, self.x_new)
+        current_covariance = current_kernel.covariance()
+        self.samples = np.zeros(shape=(n, self.n_samples))
+        for i in range(0, self.n_samples):
+            self.samples[:, i] = np.random.multivariate_normal(self.mu, current_covariance)
+
+    def train(self, x_train, y_train):
+        K_11 = Kernel(self.kernel.l, self.kernel.sigma, x_train, x_train)
+        K_12 = Kernel(self.kernel.l, self.kernel.sigma, x_train, self.x_new)
+        K_22 = Kernel(self.kernel.l, self.kernel.sigma, self.x_new, self.x_new)
+        sigma_11 = K_11.covariance()
+        sigma_22 = K_22.covariance()
+        sigma_12 = K_12.covariance()
+        
+        cov = sigma_22 - sigma_12.transpose().dot(np.linalg.inv(sigma_11)).dot(sigma_12)
+        self.mu = np.matmul(np.matmul(sigma_12.transpose(), np.linalg.inv(sigma_11)), y_train)
+        
+        n = self.x_new.shape[0]
+        self.samples = np.zeros(shape=(n, self.n_samples))
+
+        for i in range(0, self.n_samples):
+            self.samples[:, i] = np.random.multivariate_normal(self.mu.ravel(), cov)
+            print(self.samples[:, i])
+
+    def plot(self):
+        for i in range(0, self.n_samples):
+            plt.plot(self.x_new, self.samples[:, i])
+        plt.show()
+```
+
+Here we set the x test value, initialize the kernel, and create an initial `gp` object which represents the prior. We draw samples from the prior using `.get_samples`, and then we use the plot method to obtain the plot below
+```{python eval=FALSE}
+x = np.linspace(-10, 10, 21)
+init_kernel = Kernel(6, 1, x, x)
+gp = Gp(x, init_kernel, 6)
+gp.get_samples()
+gp.plot()
+```
+![](/post/2020-06-17-python_files/prior.png)
+
+Say we have now observed some training data and want to train the `gp` object and obtain some new samples. The resulting samples do indeed show no uncertainty around the training points, which is the expected bahaviour.
+```{python eval=FALSE}
+x_train = [-7,-2,5]
+y_train = [-0.5, 1, 0]
+gp.train(x_train, y_train)
+gp.plot
+```
+
+![](/post/2020-06-17-python_files/posterior.png)

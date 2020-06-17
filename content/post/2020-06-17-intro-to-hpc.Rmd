@@ -1,0 +1,169 @@
+---
+title: Intro to HPC
+author: Andrea Becsek
+date: '2020-06-17'
+slug: intro-to-hpc
+categories: []
+tags:
+  - hpc
+  - linux
+  - bash
+---
+
+High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.
+
+## Logging in
+
+#### Setting VPN (if not on university premises)
+If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
+
+1. Go to https://uobnet2.bristol.ac.uk and sign in.
+2. If this is the first time you do this on your computer then you need to install F5 Network Acess. There will be a link to download it on the website.
+3. If you have already done step 2. before then you will be shown a prompt to launch the application.
+
+Once you are connected you should see this window
+
+![](/post/2020-06-17-intro-to-hpc_files/vpn.png)
+
+#### Log in using ssh
+
+Now you are ready to log into the cluster using `ssh`. On Linux you simply use the terminal and type the following
+```{bash eval=FALSE}
+ssh -X ky19161@bluecrystalp3.acrc.bris.ac.uk
+```
+
+Note: the `-X` flag allows us to run graphical applications remotely but for them to be displayed locally.
+
+#### Copy files to and from cluster
+At some point you will most definitely need to transfer data or source code from your computer to the cluster. Note that the cluster is not intended for long-term file storage, so anything that you leave there has no guarantee that it will remain there. For that reason make sure you always transfer your results back to your local machine. For storage purposes you could instead visit http://www.bristol.ac.uk/acrc/research-data-storage-facility/.
+
+We use `scp`, which stands for `secure copy protocol`, and we always do this from within our local machine
+
+* copy from local to remote:
+`scp data.r ky19161@bluecrystalp3.acrc.bris.ac.uk:~`
+
+* copy from remote to local:
+`scp ky19161@bluecrystalp3.acrc.bris.ac.uk:data.r .`
+
+To check you file storage quota you can use: `pan_quota` and it shows the result in bytes.
+
+**Advice for file usage**: using a few larger files helps the job run faster than many small ones. This is because locating files on the cluster takes quite a bit of time.
+
+## Environment Modules
+
+BlueCrystal has an environment modules package which enables one to customize their environment. What is perhaps the most important is that you must always make sure that the module is loaded. The main commands to do this are:
+
+* `module avail`: list available modules
+* `module list`: list loaded modules
+* `module add module_name`: load module
+* `module del`: remove module
+* `module whatis`: details about the module
+
+It is recommended that you include the required modules in your shell startup file `.bashrc`. However, make sure you know what you are doing beforehand and don't modify anything else.
+
+For example, if you want to use `R` and `Python` your `.bashrc` should inclue
+```{bash eval=FALSE}
+module add languages/R-3.0.2
+module add languages/python-3.3.2
+```
+
+## How to run a job
+
+1. Include the required modules in your `.bashrc`
+2. Compile code if needed
+3. Copy scripts or data to the cluster.
+4. Create job submission script
+5. Submit job script to queuing system.
+
+#### Queuing system
+* `qstat -q`: see all the queues
+* `qstat job_number`: check status of job
+* `watch qstat job_id`: watch status of your job
+* `qstat username`: see all jobs from a user
+
+#### Submission script
+**Single-thread job**: runs a program using a single processor
+
+```{bash eval=FALSE}
+#!/bin/bash
+# resources
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=02:00:00
+# on compute node, change directory to 'submission directory':
+cd $PBS_O_WORKDIR
+# time the program:
+time ./my-serial-program
+```
+
+* `#!/bin/bash` is called a shebang and it is used to say that the script is a shell script
+* `PBS -l nodes=1:ppn=1`: tells the computer to use a single node for the job. Note that all `#PBS` commands are for the queuing system.
+* `#PBS -l walltime=02:00:00`: how long we estimate the job to take (2 hours in this case). It is always better to overestimate, rather than underestimate.
+* `cd $PBS_O_WORKDIR`: ensures that the job is run from the submission directory
+* `time ./my-serial-program`: times how long the job took to run
+
+To submit the job, simply type: 
+`qsub submission_script`.
+
+**Note**: if a permission error occurs you might have to run `chmod u+x filename' to make the file executable for your user.
+
+## Example
+
+We have the following script that we want to run.
+```{bash eval=FALSE}
+#!/bin/bash
+
+for text_file in Alices_Adventures_in_Wonderland.txt Metamorphosis.txt The_Impo\
+rtance_of_Being_Earnest.txt The_Picture_of_Dorian_Gray.txt
+do
+        echo $text_file
+        file_name="${text_file%.*}_count.txt"
+        echo $file_name
+        cat $text_file  |tr -d '[:punct:]'|tr " " "\n" | tr '[:upper:]' '[:lower:]'| sort |
+                uniq -c|sort -n | fgrep -vwf stop_words.txt | tail -n 15 >> $file_name
+
+done
+```
+
+This is a similar script to the one in the Linux portfolio. It takes the specified text files and returns the top most common words in different files, except for the specified stop words (for, at, a etc).
+
+To run this, we need to upload it to the remote directory together with the stop words file and the text files.
+![](/post/2020-06-17-intro-to-hpc_files/scp.png)
+
+Next we log into the server using ssh and note that all the required files are now in the book directory.
+![](/post/2020-06-17-intro-to-hpc_files/ssh.png)
+
+Moreover, we have created a submission script. As we see, the job is set to run the script on a single node, and sets the estimated run time to 10 minutes. Moreover, we set the working directory to `books` and we use that to obtain and create our files.
+```{bash eval=FALSE}
+#!/bin/bash
+
+#PBS -l nodes=1:ppn=1,walltime=00:10:00
+
+# Define working directory 
+export WORK_DIR=$HOME/books
+
+# Define executable
+export EXE=/bin/hostname
+
+# Change into working directory 
+cd $WORK_DIR
+
+# Print job id and working directory
+
+echo JOB ID: $PBS_JOBID
+
+echo Working Directory: `pwd`
+
+# Execute code 
+$EXE
+```
+
+We submit the job, and check its status. The status can be seen under the `S` column as `Q` for Queued, `R` for Running and `C` for Completed. Once the job finishes we obtain the new files that contain the top word counts and two additional files.
+![](/post/2020-06-17-intro-to-hpc_files/qstat_done.png)
+
+The `.e` file contains the running time in this case. But it can contain errors.
+![](/post/2020-06-17-intro-to-hpc_files/efile.png)
+
+The `.o` file has the outputs that we have printed as part of out submission script (workind directory and node) and the actual code (input and output file names).
+![](/post/2020-06-17-intro-to-hpc_files/ofile.png)
+
+While we have only examined how to submit a serial job, the HPC facilities are perhaps even more usefull for parallel jobs. 

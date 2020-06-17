@@ -1,0 +1,254 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Andrea Becsek">
+    <meta name="description" content="Portfolio for Statistical Computing 2.">
+    <meta name="keywords" content="">
+    <meta name="generator" content="Hugo 0.71.0" />
+    <title> Parallel Rcpp | Statistical Computing 2 Portfolio</title>
+    <meta name="description" content="Parallel Rcpp - Portfolio for Statistical Computing 2.">
+    <meta itemprop="name" content="Parallel Rcpp">
+    <meta itemprop="description" content="Parallel Rcpp - Portfolio for Statistical Computing 2.">
+    <meta property="og:title" content="Parallel Rcpp">
+    <meta property="og:description" content="Parallel Rcpp - Portfolio for Statistical Computing 2.">
+    <meta property="og:image" content="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?size=200">
+    <meta property="og:url" content="/post/parallel-rcpp/">
+    <meta property="og:site_name" content="Statistical Computing 2 Portfolio">
+    <meta property="og:type" content="article">
+
+    
+
+
+    
+    <link href="/post/parallel-rcpp/" rel="alternate" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    <link href="/post/parallel-rcpp/" rel="feed" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    
+
+    
+
+    <link rel="stylesheet" href="/theme.css">
+
+    
+
+    
+    
+    
+</head>
+
+<body class="bilberry-hugo-theme">
+
+    
+    <nav>
+
+    <div class="container">
+        <ul class="topnav">
+            
+            
+            <li><a href="/page/about-bilberry/">About Bilberry</a></li>
+            
+            
+            
+            <li><a href="https://github.com/Lednerb/bilberry-hugo-theme" target="_blank">Github</a></li>
+            
+            
+        </ul>
+
+        
+    </div>
+</nav>
+
+
+    
+<header>
+
+    <div class="container">
+        <div class="logo">
+            <a id="siteBaseUrl" href="/" class="logo">
+                
+                <img src="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?d=mm&size=200" alt="">
+                
+
+                <span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title"><a
+                    href="/">Statistical Computing 2 Portfolio</a></h3>
+            
+            <span class="subtitle">Andrea Becsek</span>
+            
+        </div>
+
+        
+
+        
+            <div class="toggler">
+                
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+        </div>
+</header>
+
+
+    <div class="main container">
+        
+     
+    <div class="article-wrapper u-cf single">
+        
+            <a class="bubble" href="/post/parallel-rcpp/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article">
+    
+
+    <div class="content">
+    <h1 class="article-title"><a href="/post/parallel-rcpp/">Parallel Rcpp</a></h1>
+    <div class="meta">
+        
+        
+        <span class="date moment">2020-06-17</span>
+        
+        
+
+        
+
+        
+
+        
+    </div>
+
+    
+    
+
+
+<div id="rcpp-parallel" class="section level2">
+<h2>Rcpp Parallel</h2>
+<pre class="r"><code>library(Rcpp)</code></pre>
+<p>Consider a simple scenario. We want to flip <span class="math inline">\(100\)</span> coins and get an estimate of the mean.
+We can do this in R</p>
+<pre class="r"><code>mean(rbinom(100, 1, 0.5))</code></pre>
+<pre><code>## [1] 0.55</code></pre>
+<p>We can do this using</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;Rcpp.h&gt;
+using namespace Rcpp;
+
+int flip_coin(){
+  int n = rand() % 2;
+  return n;
+}
+
+//[[Rcpp::export(mean_flips)]]
+NumericVector coin()
+{
+  NumericVector out(100);
+  for(i=0; i&lt;100; i++)
+  {
+    out[i] = flip_coin
+  }
+  return out;
+}</code></pre>
+<pre class="r"><code>sourceCpp(&quot;../code/coin_rcpp.cpp&quot;)</code></pre>
+<pre class="r"><code>mean_flips()</code></pre>
+<pre><code>##   [1] 0 0 0 1 1 0 1 0 0 0 1 1 0 0 0 1 1 0 0 1 1 1 0 1 0 0 0 1 0 1 0 0 1 0 1 0 0
+##  [38] 1 1 0 1 0 1 1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 1 1 1 1 0 0 1 1 1 1 0 0 1 0 0 0
+##  [75] 1 0 1 0 0 0 0 0 1 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 0</code></pre>
+</div>
+
+    
+</div>
+
+    
+<div class="footer no-tags">
+
+
+    
+
+    
+</div>
+
+</article>
+
+        
+    </div>
+
+    
+        <div id="comments-container">
+            
+            
+
+        </div>
+    
+
+     
+
+    </div>
+
+    
+<footer>
+    <div class="container">
+
+        
+
+        
+
+        <div class="right">
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+
+<div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/Lednerb" target="_blank">
+                &copy;
+                
+                2017
+                
+                by Lednerb
+            </a>
+            
+        </div>
+        <div class="author">
+            <a href="https://github.com/Lednerb/bilberry-hugo-theme"
+                target="_blank">Bilberry Hugo Theme</a>
+        </div>
+    </div>
+</div>
+
+
+    
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+</script>
+
+    
+
+
+    <script type="text/javascript" src="/theme.js"></script>
+
+    
+    
+    
+
+    
+
+
+</body>
+
+</html>

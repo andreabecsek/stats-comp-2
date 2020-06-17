@@ -5,10 +5,21 @@
     <link>/tags/linux/</link>
     <description>Recent content in linux on Statistical Computing 2 Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Intro to HPC</title>
+      <link>/post/intro-to-hpc/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/intro-to-hpc/</guid>
+      <description>High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.
+Logging in Setting VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
+Go to https://uobnet2.bristol.ac.uk and sign in.</description>
+    </item>
     
     <item>
       <title>Intro to Linux</title>

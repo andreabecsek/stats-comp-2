@@ -1,0 +1,375 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Andrea Becsek">
+    <meta name="description" content="Portfolio for Statistical Computing 2.">
+    <meta name="keywords" content="">
+    <meta name="generator" content="Hugo 0.71.0" />
+    <title> Introduction to OpenMP | Statistical Computing 2 Portfolio</title>
+    <meta name="description" content="Introduction to OpenMP - Portfolio for Statistical Computing 2.">
+    <meta itemprop="name" content="Introduction to OpenMP">
+    <meta itemprop="description" content="Introduction to OpenMP - Portfolio for Statistical Computing 2.">
+    <meta property="og:title" content="Introduction to OpenMP">
+    <meta property="og:description" content="Introduction to OpenMP - Portfolio for Statistical Computing 2.">
+    <meta property="og:image" content="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?size=200">
+    <meta property="og:url" content="/post/introduction-to-openmp/">
+    <meta property="og:site_name" content="Statistical Computing 2 Portfolio">
+    <meta property="og:type" content="article">
+
+    
+
+
+    
+    <link href="/post/introduction-to-openmp/" rel="alternate" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    <link href="/post/introduction-to-openmp/" rel="feed" type="application/rss+xml" title="Statistical Computing 2 Portfolio" />
+    
+
+    
+
+    <link rel="stylesheet" href="/theme.css">
+
+    
+
+    
+    
+    
+</head>
+
+<body class="bilberry-hugo-theme">
+
+    
+    <nav>
+
+    <div class="container">
+        <ul class="topnav">
+            
+            
+            <li><a href="/page/about-bilberry/">About Bilberry</a></li>
+            
+            
+            
+            <li><a href="https://github.com/Lednerb/bilberry-hugo-theme" target="_blank">Github</a></li>
+            
+            
+        </ul>
+
+        
+    </div>
+</nav>
+
+
+    
+<header>
+
+    <div class="container">
+        <div class="logo">
+            <a id="siteBaseUrl" href="/" class="logo">
+                
+                <img src="https://www.gravatar.com/avatar/4b543f7324877bb626c1c0ed53277844?d=mm&size=200" alt="">
+                
+
+                <span class="overlay"><i class="fa fa-home"></i></span>
+            </a>
+        </div>
+        <div class="titles">
+            <h3 class="title"><a
+                    href="/">Statistical Computing 2 Portfolio</a></h3>
+            
+            <span class="subtitle">Andrea Becsek</span>
+            
+        </div>
+
+        
+
+        
+            <div class="toggler">
+                
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </div>
+        </div>
+</header>
+
+
+    <div class="main container">
+        
+     
+    <div class="article-wrapper u-cf single">
+        
+            <a class="bubble" href="/post/introduction-to-openmp/">
+    <i class="fas fa-fw fa-pencil-alt"></i>
+</a>
+
+<article class="default article">
+    
+
+    <div class="content">
+    <h1 class="article-title"><a href="/post/introduction-to-openmp/">Introduction to OpenMP</a></h1>
+    <div class="meta">
+        
+        
+        <span class="date moment">2020-06-17</span>
+        
+        
+
+        
+
+        
+
+        
+        <span class="author">
+            
+            
+            <a href="/author/andrea-becsek/">Andrea Becsek</a>
+            
+        </span>
+        
+    </div>
+
+    
+    
+
+
+<p>OpenMP is an interface that provides support for parallel programming.</p>
+<p>The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.</p>
+<p>We wrote the <code>hello.cpp</code> code and compiled it.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+int main()
+{       
+        #pragma omp parallel
+        {
+                std::cout &lt;&lt; &quot;Hello from OpenMP!\n&quot;;
+        }
+
+        return 0;
+}  </code></pre>
+<p>Note that we included a single new line, <code>#pragma omp parallel</code> which simply mentions that the code between the brackets is what we aim to parallelize.</p>
+<p>And we compile the program using</p>
+<pre class="bash"><code>g++ -fopenmp hello_openmp.cpp -o hello_openm</code></pre>
+<p>Now, we set the number of threads to <span class="math inline">\(3\)</span> using the <code>OMP_NUM_THREADS</code> variable and execute the file. The code has indeed been run <span class="math inline">\(3\)</span> times.
+<img src="/post/2020-06-17-introduction-to-openmp_files/hellomp.png" /></p>
+<div id="directives" class="section level3">
+<h3>Directives</h3>
+<p>In general code is executed one line at a time, beginning with the main function. While usually there is a single main thread, what the <code>#pragma</code> commands do is split the given code into multiple threads. Then each thread executes the specified code in parallel.</p>
+<p>The OpenMP library provides the two functions used to identify threads:</p>
+<ul>
+<li><code>omp_get_thread_num()</code>: thread id</li>
+<li><code>omp_get_num_threads()</code>: total threads</li>
+</ul>
+<p>There are different ways to assign threads to tasks, and this is why there are different types of directives:</p>
+<ul>
+<li><code>parallel</code>: execute code in parallel</li>
+<li><code>sections</code>: run in parallel different sections of the code</li>
+<li><code>for</code>: tells loops which iterations to assign to different threads</li>
+<li><code>critical</code>: block of code that is only allowed to be run by one block at a time</li>
+<li><code>reduction</code>: combine results into one</li>
+</ul>
+<div id="parallel" class="section level4">
+<h4>Parallel</h4>
+<p>To see how these threads works let’s create a program that returns the id of each thread.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+#ifdef _OPENMP
+    #include &lt;omp.h&gt;
+#else
+    #define omp_get_num_threads() 0
+    #define omp_get_thread_num() 0
+#endif
+
+int main(){
+        std::cout &lt;&lt; &quot;This is the main thread.\n&quot;;
+
+        #pragma omp parallel
+        {
+                int n_threads = omp_get_num_threads();
+                int thread_id = omp_get_thread_num();
+
+                std::cout &lt;&lt; &quot;This is thread&quot;
+                        &lt;&lt; thread_id 
+                        &lt;&lt; &quot;out of&quot; 
+                        &lt;&lt; n_threads 
+                        &lt;&lt; std::endl;
+        }
+
+        std::cout &lt;&lt; &quot;This is the main thread again.\n&quot;;
+
+        return 0;
+}</code></pre>
+<p>Note that the <code>thread_id</code> and <code>n_threads</code> are local variables within the parallelized section. The code is the compiled and ran as previously.</p>
+</div>
+<div id="sections" class="section level4">
+<h4>Sections</h4>
+<p>Sections are used to define different sections of the code that can be run in parallel. To see how it works, let’s consider a simple example that adds and checks whether the numbers are equal.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+int sum(int a, int b){
+  int c = a + b;
+  return c;
+}
+
+bool is_equal(int a, int b){
+  bool c = (a == b);
+  return c;
+}
+
+int main(){
+  
+  std::cout &lt;&lt; &quot;Hello from main thread.\n&quot;;
+  
+  #pragma omp parallel
+  {
+    #pragma omp sections
+    {
+      #pragma omp section
+      {
+        sum(2,4);
+      }
+      #pragma omp section
+      {
+        is_equal(2,4);
+      }
+    }
+  }
+  return 0;
+}</code></pre>
+<p>Compiling and executing this code has actually no return. It is purely for demonstrative purposes.</p>
+<!-- #### Loops -->
+<!-- We very often run a large number of iterations within a loop. If these iterations are independent of each other we can use the `for` directive to split the iterations between the assigned threads. -->
+</div>
+<div id="reductions" class="section level4">
+<h4>Reductions</h4>
+<p>Reductions combine multiple subcalculations into one after every calculations. This way we don’t have to store all the results until the end.</p>
+<p>Let’s estimate the mean of <span class="math inline">\(100\)</span> coin flips.</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+
+#ifdef _OPENMP
+    #include &lt;omp.h&gt;
+#else
+    #define omp_get_thread_num() 0
+#endif
+
+int flip_coin(){
+        int n = rand() % 2;
+        return n;
+}
+
+int main(){
+        int count = 0;
+        #pragma omp parallel reduction( + : count )
+        {
+                int private_count = 0;
+
+                #pragma omp for
+                for (int i=0; i&lt;100; i++)
+                {
+                        int flip = flip_coin();
+
+                        if (flip == 1)
+                        {
+                                ++private_count;
+                        }
+                }
+                count += private_count;
+        }
+                std::cout &lt;&lt; &quot;Estimated mean of 100 coin flips is: &quot; &lt;&lt; count/double(100) &lt;&lt;&quot;\n&quot;;
+        return 0;
+}</code></pre>
+</div>
+</div>
+
+    
+</div>
+
+    
+<div class="footer no-tags">
+
+
+    
+
+    
+</div>
+
+</article>
+
+        
+    </div>
+
+    
+        <div id="comments-container">
+            
+            
+
+        </div>
+    
+
+     
+
+    </div>
+
+    
+<footer>
+    <div class="container">
+
+        
+
+        
+
+        <div class="right">
+            
+
+            
+        </div>
+    </div>
+</footer>
+
+
+<div class="credits">
+    <div class="container">
+        <div class="copyright">
+            <a href="https://github.com/Lednerb" target="_blank">
+                &copy;
+                
+                2017
+                
+                by Lednerb
+            </a>
+            
+        </div>
+        <div class="author">
+            <a href="https://github.com/Lednerb/bilberry-hugo-theme"
+                target="_blank">Bilberry Hugo Theme</a>
+        </div>
+    </div>
+</div>
+
+
+    
+
+    
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+</script>
+
+    
+
+
+    <script type="text/javascript" src="/theme.js"></script>
+
+    
+    
+    
+
+    
+
+
+</body>
+
+</html>

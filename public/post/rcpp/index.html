@@ -219,12 +219,12 @@ muSmoothSmallRcpp &lt;- meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.02)</code>
 <p>Compare the efficiency of the two functions and note that the <code>Rcpp</code> implementation is about <span class="math inline">\(1.5\)</span> times faster.</p>
 <pre class="r"><code>microbenchmark(meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), meanKRS(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
-##                                               expr      min       lq     mean
-##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
-##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.500849 1.509759 1.506717
-##    median       uq      max neval cld
-##  1.000000 1.000000 1.000000   100  a 
-##  1.522478 1.523124 1.553303   100   b</code></pre>
+##                                               expr      min      lq     mean
+##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.00000 1.000000
+##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.507025 1.53083 1.545285
+##    median      uq      max neval cld
+##  1.000000 1.00000 1.000000   100  a 
+##  1.532626 1.56188 1.572384   100   b</code></pre>
 </div>
 <div id="q1b" class="section level3">
 <h3>Q1b</h3>
@@ -479,12 +479,12 @@ NumericVector varKRS_cpp(const NumericVector y, const NumericVector x, const Num
 <p>Comparing the performances it is clear that the <code>C</code> implementation is faster.</p>
 <pre class="r"><code>microbenchmark(varKRS(y = y, x = x, x0 = x_new, lam = 0.06), varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
-##                                              expr      min       lq    mean
-##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.522923 1.574803 1.59361
-##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.00000
-##    median       uq      max neval cld
-##  1.534016 1.597117 3.914591   100   b
-##  1.000000 1.000000 1.000000   100  a</code></pre>
+##                                              expr      min       lq     mean
+##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.519591 1.523923 1.580855
+##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
+##   median       uq      max neval cld
+##  1.53262 1.608302 5.264234   100   b
+##  1.00000 1.000000 1.000000   100  a</code></pre>
 <p>Perform cross validation using <code>R</code></p>
 <pre class="r"><code>cv_error_var &lt;- function(y, x, lambdas, k = 10) {
   # define error metric
@@ -543,6 +543,208 @@ NumericVector varKRS_cpp(const NumericVector y, const NumericVector x, const Num
   geom_vline(aes(xintercept = lambda[which.min(error)]), color = &quot;darkgrey&quot;, linetype=&#39;dashed&#39;)</code></pre>
 <p><img src="/post/2020-05-25-rcpp_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
 <pre class="r"><code>microbenchmark(cv_varKRS_cpp(y, x, lambdas, 5), cv_error_var(y, x, lambdas, 5), unit = &quot;relative&quot;)</code></pre>
+</div>
+<div id="using-rcpp-in-a-package" class="section level2">
+<h2>Using Rcpp in a package</h2>
+<p>Now that we have seen how to write code in Rcpp, we might want to make this more reproducible by embedding everything into a package.</p>
+<p>Luckily, <code>Rcpp</code> provides an <code>Rcpp.package.skeleton</code> function which, as the name says, creates a skeleton package. After creating this skeleton, we can examine what has been generated:</p>
+<pre class="r"><code># PACKAGE FOR ADAPTIVE KERNEL REGRESSION SMOOTHING
+Rcpp.package.skeleton(&#39;akrs&#39;)
+system(&quot;ls -1R akrs/&quot;)</code></pre>
+<p>Now, let’s examine the <code>rcpp_hello_world.cpp</code> file</p>
+<pre class="cpp"><code>
+#include &lt;Rcpp.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::export]]
+List rcpp_hello_world() {
+
+    CharacterVector x = CharacterVector::create( &quot;foo&quot;, &quot;bar&quot; )  ;
+    NumericVector y   = NumericVector::create( 0.0, 1.0 ) ;
+    List z            = List::create( x, y ) ;
+
+    return z ;
+}</code></pre>
+<p>This file has the structure that we are now used to, but note that we use <code>// [[Rcpp::export]]</code> to export the <code>rcpp_hello_world()</code> function. In order for this to happen, the <code>compileAttributes</code> function is called and it generates the <code>RcppExports.cpp</code>, which is the Rcpp wrapper for the function. The R wrapper can be found in <code>RcppExports.R</code>.</p>
+<p>The <strong>DESCRIPTION</strong> file looks like this so far:</p>
+<pre class="r"><code>Package: akrs
+Type: Package
+Title: What the Package Does
+   in One &#39;Title Case&#39; Line
+Version: 1.0
+Date: 2020-06-16
+Author: Your Name
+Maintainer: Your Name
+   &lt;your@email.com&gt;
+Description: One paragraph
+   description of what the
+   package does as one or
+   more full sentences.
+License: GPL (&gt;= 2)
+Imports: Rcpp (&gt;= 1.0.4)
+LinkingTo: Rcpp</code></pre>
+<ul>
+<li><code>Imports</code>: indicates dependency between package and <code>Rcpp</code></li>
+<li><code>LinkingTo</code>: package uses header files from specified package (i.e. <code>Rcpp</code>)</li>
+</ul>
+<p>The <strong>NAMESPACE</strong> file looks as follows:</p>
+<pre class="r"><code># ENABLE ALL REGISTERED ROUTINES TO BE ACCESSIBLE FROM R
+useDynLib(akrs, .registration=TRUE)
+
+# EXPORTS ALL FUNCTIONS THAT START WITH A LETTER
+exportPattern(&quot;^[[:alpha:]]+&quot;)
+
+# PACKAGES USING RCPP NEED TO IMPORT SOMETHING FROM IT (MIGHT NOT BE REQUIRED IN THE FUTURE)
+importFrom(Rcpp, evalCpp)</code></pre>
+<div id="add-meankrs-function-to-the-package." class="section level3">
+<h3>Add <code>meanKRS</code> function to the package.</h3>
+<p>The <code>meanKRS</code> function looks like this</p>
+<pre class="cpp"><code>#include &lt;Rcpp.h&gt;
+
+using namespace Rcpp;
+
+//&#39;Estimate conditional expectiation using a Gaussian Kernel with fixed variance.
+//&#39;
+//&#39; @param y numeric vector
+//&#39; @param x numeric vector
+//&#39; @param x0 numeric vector
+//&#39; @param lambda double
+//&#39; @return conditional expectation
+// [[Rcpp::export(name = &quot;meanKRS_cpp&quot;)]]
+NumericVector meanKRS_cpp(const NumericVector y, const NumericVector x, const NumericVector x0, const double lambda){
+  // define required variables and output vector
+  int n = x.size();
+    int n0 = x0.size();
+    NumericVector out(n0);
+    
+    // estimate conditional expectation
+    for(int i = 0; i &lt; n0; i++){
+      NumericVector kernel = dnorm(x, x0[i],lambda,0);
+      
+      // numerator
+      double num = 0;
+      for(int j = 0; j &lt; n; j++){
+        num = num + kernel[j] * y[j];
+      }
+      
+      //denominator
+      double denom = 0;
+      for(int j = 0; j &lt; n; j++){
+        denom = denom + kernel[j];
+      }
+  out[i] = num / denom;
+    }
+    return out;
+}</code></pre>
+<p>Note that we have added some comments to be converted into documentation using <code>roxygenize('akrs')</code>. This file has been added to the <code>src</code> folder.</p>
+<p>Let’s compile the <code>Rcpp</code> attributes:</p>
+<pre class="r"><code>compileAttributes(&quot;akrs&quot;)</code></pre>
+<p>The obtained wrapper function is in <code>akrs/R/RcppExports.R</code>:</p>
+<pre class="r"><code># Generated by using Rcpp::compileAttributes() -&gt; do not edit by hand
+# Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
+
+#&#39;Estimate conditional expectation using a Gaussian Kernel with fixed variance.
+#&#39;
+#&#39; @param y numeric vector
+#&#39; @param x numeric vector
+#&#39; @param x0 numeric vector
+#&#39; @param lambda double
+#&#39; @return conditional expectation
+meanKRS_cpp &lt;- function(y, x, x0, lambda) {
+    .Call(`_akrs_meanKRS_cpp`, y, x, x0, lambda)
+}
+
+rcpp_hello_world &lt;- function() {
+    .Call(`_akrs_rcpp_hello_world`)
+}</code></pre>
+<p>We could now try to build our package using</p>
+<pre class="r"><code>system(&#39;R CMD build akrs&#39;)</code></pre>
+<p>And once the build is successful, the package can be installed using</p>
+<pre class="r"><code>system(&#39;R CMD INSTALL akrs_1.0.tar.gz&#39;)</code></pre>
+<p>Similarly, we have also added the <code>varKRS_cpp</code> to the package.</p>
+</div>
+<div id="make-the-c-functions-from-the-package-callable-by-other-packages." class="section level3">
+<h3>Make the C++ functions from the package callable by other packages.</h3>
+<p>Let’s say the package that we have created is an already existing package created by someone else, and we want to write our package using its functions. In this case, while this might not be the ideal approach, we demonstrate how to achieve this by creating a cross-validation package already existing <code>akrs</code> package.</p>
+<p>One might think that it is a good idea to call the <code>C++</code> functions from an <code>R</code> package via <code>.Call</code> is not encouraged. We want to get the functions communicating via <code>C++</code>. The <code>Rcpp::interfaces(cpp)</code> command is essentially used to export a <code>C++</code> function from the package as follows:</p>
+<pre class="cpp"><code>#include &lt;Rcpp.h&gt;
+
+// [[Rcpp::interfaces(cpp)]]
+
+using namespace Rcpp;
+
+//&#39;Estimate conditional expectation using a Gaussian Kernel with fixed variance.
+//&#39;
+//&#39; @param y numeric vector
+//&#39; @param x numeric vector
+//&#39; @param x0 numeric vector
+//&#39; @param lambda double
+//&#39; @return conditional expectation
+// [[Rcpp::export(name = &quot;meanKRS_cpp&quot;)]]
+NumericVector meanKRS_cpp(const NumericVector y, const NumericVector x, const NumericVector x0, const double lambda){
+  // define required variables and output vector
+  int n = x.size();
+  int n0 = x0.size();
+  NumericVector out(n0);
+  
+  // estimate conditional expectation
+  for(int i = 0; i &lt; n0; i++){
+    NumericVector kernel = dnorm(x, x0[i],lambda,0);
+    
+    // numerator
+    double num = 0;
+    for(int j = 0; j &lt; n; j++){
+      num = num + kernel[j] * y[j];
+    }
+    
+    //denominator
+    double denom = 0;
+    for(int j = 0; j &lt; n; j++){
+      denom = denom + kernel[j];
+    }
+    out[i] = num / denom;
+  }
+  return out;
+}</code></pre>
+<p>Recompiling the attribues, the following lines appear in <code>RcppExports.cpp</code>:</p>
+<pre class="cpp"><code>// registerCCallable (register entry points for exported C++ functions)
+RcppExport SEXP _akrs_RcppExport_registerCCallable() { 
+    R_RegisterCCallable(&quot;akrs&quot;, &quot;_akrs_meanKRS_cpp&quot;, (DL_FUNC)_akrs_meanKRS_cpp_try);
+    R_RegisterCCallable(&quot;akrs&quot;, &quot;_akrs_RcppExport_validate&quot;, (DL_FUNC)_akrs_RcppExport_validate);
+    return R_NilValue;
+}</code></pre>
+<p>This simply shows that the <code>_akrs_meanKRS_cpp</code> has been registered and can be called from other packages.</p>
+<p>Moreover, a header files have also been created</p>
+<ul>
+<li><code>akrs.h</code>: header file for the package that includes the associated header files, in this case:</li>
+<li><code>akrs_RcppExports.h</code>: defines the package NAMESPACE and exports the function with the name that we specified for it in using <code>Rcpp::export(name = &quot;meanKRS_cpp&quot;)</code>.</li>
+</ul>
+<p>Now, the function can be called from other packages. To demonstrate this, we create the cross-validation package mentioned above, and call it <code>akrscv</code>.</p>
+<pre class="r"><code>Rcpp.package.skeleton(&quot;akrscv&quot;)</code></pre>
+<p>We make sure to link this package to the <code>akrs</code> package by
+adding <code>akrscv</code> to the <code>LinkingTo</code> filed in the DESCRIPTION file.</p>
+<p>We add the cross-validation function <code>cv_meanKRS.cpp</code> and include the header of the linked package using <code>#include &lt;akrs.h&gt;</code>. Rebuild and install the <code>akrs</code> package using</p>
+<pre class="r"><code>system(&quot;R CMD build akrs&quot;)
+system(&quot;R CMD INSTALL akrs_1.0.tar.gz&quot;)</code></pre>
+<p>Finally, compile the attributes of <code>akrscv</code>, build and compile.</p>
+<pre class="r"><code>compileAttributes(&#39;akrscv&#39;)
+system(&quot;R CMD build akrscv&quot;)
+system(&quot;R CMD INSTALL akrscv_1.0.tar.gz&quot;)</code></pre>
+<p>Note: If the man file for a function does not appear, do not write it by hand. Rebuild and use <code>roxygen2::roxygenize()</code>.</p>
+<p>Let’s check if the function does indeed work.</p>
+<ol style="list-style-type: decimal">
+<li>Install package from github using</li>
+</ol>
+<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrs&quot;)</code></pre>
+<pre><code>## Skipping install of &#39;akrs&#39; from a github remote, the SHA1 (e43162b6) has not changed since last install.
+##   Use `force = TRUE` to force installation</code></pre>
+<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrscv&quot;)</code></pre>
+<pre><code>## Skipping install of &#39;akrscv&#39; from a github remote, the SHA1 (b38b9729) has not changed since last install.
+##   Use `force = TRUE` to force installation</code></pre>
+<p>Use the package functions and</p>
+<pre class="r"><code>akrs::varKRS_cpp(y,x,x_new,0.2)
+akrscv::cv_meanKRS_cpp(y,x,lambdas=seq(0.1,1, by=0.01),10)</code></pre>
+</div>
 </div>
 
     

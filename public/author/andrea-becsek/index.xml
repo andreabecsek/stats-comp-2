@@ -5,10 +5,54 @@
     <link>/author/andrea-becsek/</link>
     <description>Recent content in Andrea Becsek on Statistical Computing 2 Portfolio</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 13 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/author/andrea-becsek/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Deep Learning</title>
+      <link>/post/deep-learning/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/deep-learning/</guid>
+      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.
+The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
+    </item>
+    
+    <item>
+      <title>Intro to HPC</title>
+      <link>/post/intro-to-hpc/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/intro-to-hpc/</guid>
+      <description>High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.
+Logging in Setting VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
+Go to https://uobnet2.bristol.ac.uk and sign in.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to OpenMP</title>
+      <link>/post/introduction-to-openmp/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/introduction-to-openmp/</guid>
+      <description>OpenMP is an interface that provides support for parallel programming.
+The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
+We wrote the hello.cpp code and compiled it.
+#include &amp;lt;iostream&amp;gt; int main() { #pragma omp parallel { std::cout &amp;lt;&amp;lt; &amp;quot;Hello from OpenMP!\n&amp;quot;; } return 0; }  Note that we included a single new line, #pragma omp parallel which simply mentions that the code between the brackets is what we aim to parallelize.</description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>/post/python/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/python/</guid>
+      <description>We are going to focus on objected oriented programming with Python. We have already talked about the main concepts of OOP and seen how they work in R. To make the transition easier, we are going to follow a similar structure to the in the R OOP portfolio.
+Create class with constructor We start by creating a Shape class and initialize it with the variable side_lengths and name.
+import numpy as np class Shape: def __init__(self, name, side_lengths): self.</description>
+    </item>
     
     <item>
       <title>Advanced Rcpp</title>

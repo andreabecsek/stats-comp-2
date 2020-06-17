@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include <Rmath.h>
+//#include <Rmath.h>
 using namespace Rcpp;
 
 // [[Rcpp::export(name = "varKRS_cpp")]]

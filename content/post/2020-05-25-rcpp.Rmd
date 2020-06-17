@@ -694,10 +694,12 @@ Similarly, we have also added the `varKRS_cpp` to the package.
 ### Make the C++ functions from the package callable by other packages.
 Let's say the package that we have created is an already existing package created  by someone else, and we want to write our package using its functions. In this case, while this might not be the ideal approach, we demonstrate how to achieve this by creating a cross-validation package already existing `akrs` package.
 
-One might think that it is a good idea to call the `C++` functions from an `R` package via `.Call` is not encouraged. We want to get the functions communicating via `C++`. The `Rcpp::interfaces` function is essentially used to export a `C++` function from the package as follows:
+One might think that it is a good idea to call the `C++` functions from an `R` package via `.Call` is not encouraged. We want to get the functions communicating via `C++`. The `Rcpp::interfaces(cpp)` command is essentially used to export a `C++` function from the package as follows:
 
-```{r eval=FALSE}
+```{Rcpp eval=FALSE}
 #include <Rcpp.h>
+
+// [[Rcpp::interfaces(cpp)]]
 
 using namespace Rcpp;
 
@@ -734,5 +736,60 @@ NumericVector meanKRS_cpp(const NumericVector y, const NumericVector x, const Nu
   }
   return out;
 }
+```
+
+Recompiling the attribues, the following lines appear in `RcppExports.cpp`:
+```{Rcpp eval=FALSE}
+// registerCCallable (register entry points for exported C++ functions)
+RcppExport SEXP _akrs_RcppExport_registerCCallable() { 
+    R_RegisterCCallable("akrs", "_akrs_meanKRS_cpp", (DL_FUNC)_akrs_meanKRS_cpp_try);
+    R_RegisterCCallable("akrs", "_akrs_RcppExport_validate", (DL_FUNC)_akrs_RcppExport_validate);
+    return R_NilValue;
+}
+```
+
+This simply shows that the `_akrs_meanKRS_cpp` has been registered and can be called from other packages. 
+
+Moreover, a header files have also been created
+
+* `akrs.h`: header file for the package that includes the associated header files, in this case:
+* `akrs_RcppExports.h`: defines the package NAMESPACE and exports the function with the name that we specified for it in using `Rcpp::export(name = "meanKRS_cpp")`.
+
+Now, the function can be called from other packages. To demonstrate this, we create the cross-validation package mentioned above, and call it `akrscv`.
+
+```{r eval=FALSE}
+Rcpp.package.skeleton("akrscv")
+```
+
+We make sure to link this package to the `akrs` package by 
+adding `akrscv` to the `LinkingTo` filed in the DESCRIPTION file.
+
+We add the cross-validation function `cv_meanKRS.cpp` and include the header of the linked package using `#include <akrs.h>`. Rebuild and install the `akrs` package using
+```{r eval=FALSE}
+system("R CMD build akrs")
+system("R CMD INSTALL akrs_1.0.tar.gz")
+```
+
+Finally, compile the attributes of `akrscv`, build and compile.
+```{r eval=FALSE}
+compileAttributes('akrscv')
+system("R CMD build akrscv")
+system("R CMD INSTALL akrscv_1.0.tar.gz")
+```
+
+Note: If the man file for a function does not appear, do not write it by hand. Rebuild and use `roxygen2::roxygenize()`.
+
+Let's check if the function does indeed work.
+
+1. Install package from github using
+```{r}
+devtools::install_github("andreabecsek/akrs")
+devtools::install_github("andreabecsek/akrscv")
+```
+
+Use the package functions and 
+```{r eval=FALSE}
+akrs::varKRS_cpp(y,x,x_new,0.2)
+akrscv::cv_meanKRS_cpp(y,x,lambdas=seq(0.1,1, by=0.01),10)
 ```
 

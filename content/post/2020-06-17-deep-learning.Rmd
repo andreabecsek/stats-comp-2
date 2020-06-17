@@ -1,0 +1,92 @@
+---
+title: Deep Learning
+author: Andrea Becsek
+date: '2020-06-17'
+slug: deep-learning
+categories: []
+tags:
+  - python
+  - tensorflow
+---
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, python.reticulate=FALSE)
+```
+
+## Introduction to Neural Networks
+
+Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.
+
+The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other. 
+<center>
+![](/post/2020-06-17-deep-learning_files/nn.png){width=300px height=200px}
+</center>
+
+Breaking it down, every neuron receives a set of inputs, which are weighted, summed and passed through an activation function, often a sigmoid. 
+
+We are going to run through a small example using the fashion MNIST database, which contains greyscale images of various fashion items.
+
+For this purpose we are going to use Tensorflow and Keras.
+
+Let's break it down step by step. We first import `Tensorflow`, load the training and test datasets from the library.
+```{python eval=FALSE}
+import tensorflow as tf
+
+# Load data
+dataset = tf.keras.datasets.fashion_mnist.load_data()
+(x_train, y_train) = dataset[0]
+(x_test, y_test) = dataset[1]
+```
+
+The labels at the moment take the form of $10$ different strings. To make the labels easier to work with, we use one hot encoding.
+```{python eval=FALSE}
+# Convert labels using one hot encoding
+y_train = tf.keras.utils.to_categorical(y_train)
+y_test = tf.keras.utils.to_categorical(y_test)
+```
+
+Now, our images are in 2D, so we need to flatten them into 1D arrays
+```{python eval=FALSE}
+# Convert input images to 1D
+x_train = x_train.reshape(x_train.shape[0], -1) /255
+x_test = x_test.reshape(x_test.shape[0], -1) /255
+```
+
+We use a Neural Network with a single hidden layer to begin with. We set the number of neurons in the hidden layer to be `8` and the number of classes is known and must be set to `10`. We initialize the model, add the hidden layer, and then add the output layer as follows
+```{python eval=FALSE}
+# Use a sequential model
+model = tf.keras.models.Sequential()
+
+# First hidden layer with 8 neurons
+n_neurons = 8
+n_classes = 10
+model.add(tf.keras.layers.Dense(n_neurons, input_dim=784, activation='relu'))
+
+# Add output layer
+model.add(tf.keras.layers.Dense(n_classes, activation='softmax'))
+```
+
+We must describe the specifics of training the model. The optimiser that we use is `adam`, the `categorical_crossentropy` loss function computes the cross-entropy between the predicted and actual class labels.
+```{python eval=FALSE}
+# Specify how to train model
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='accuracy')
+```
+
+Finally, we fit the model using a 30/70 validation split and `5` epochs. An epoch is a breakdown of the data that can be passed through the model one batch at a time until the entire training dataset has been seen once. However, we are exposing the network to the entire dataset `5` times in this case so it gets to know it better.
+```{python, eval=FALSE}
+# Fit model
+n_epochs=5
+model.fit(x_train, y_train, epochs=n_epochs, validation_split=0.3)
+```
+
+Let's see how the model performs on the training data
+![](/post/2020-06-17-deep-learning_files/epochs.png)
+
+After the final epoch, we see that the accuracy is at around `83.6%`, which is pretty good.
+
+How about the performance on the test set? `82.22%`. That is still not bad given how basic this implementation is.
+```{python, eval=FALSE}
+model.evaluate(x_test,y_test)[1]
+```
+
+![](/post/2020-06-17-deep-learning_files/final_acc.png)
+

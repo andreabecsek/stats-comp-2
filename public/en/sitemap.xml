@@ -3,18 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/post/advanced-rcpp/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/author/andrea-becsek/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/author/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="de"
@@ -29,27 +24,67 @@
   
   <url>
     <loc>/tags/bash/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/post/intro-to-linux/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <loc>/post/deep-learning/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/hpc/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/intro-to-hpc/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/introduction-to-openmp/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/tags/linux/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/parallel/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/parallel-python/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/parallel-rcpp/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/python/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/python/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="de"
@@ -64,7 +99,7 @@
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="de"
@@ -75,6 +110,21 @@
                 hreflang="en"
                 href="/tags/"
                 />
+  </url>
+  
+  <url>
+    <loc>/tags/tensorflow/</loc>
+    <lastmod>2020-06-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/advanced-rcpp/</loc>
+    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/intro-to-linux/</loc>
+    <lastmod>2020-06-13T00:00:00+00:00</lastmod>
   </url>
   
   <url>

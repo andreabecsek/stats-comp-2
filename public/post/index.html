@@ -336,8 +336,12 @@ We wrote the hello.cpp code and compiled it.
     </div>
 
     
-    
+    In this portfolio we are going to focus on parallelizing code locally, so using multiple cores of the computer. To do this we use Python’s multiprocessing library, especially its Pool feature.
+We check the number of existing cores on our local machine using and note that we have 8.
+print(multiprocessing.cpu_count()) Before we even start writing our script, we must make sure to include all the libraries at the very top followed by the function definitions.
 
+    
+    <a href="/post/parallel-python/" class="more">Continue reading</a>
     
     
 </div>
@@ -400,9 +404,8 @@ We wrote the hello.cpp code and compiled it.
     </div>
 
     
-    Rcpp Parallel library(Rcpp) Consider a simple scenario. We want to flip \(100\) coins and get an estimate of the mean. We can do this in R
-mean(rbinom(100, 1, 0.5)) ## [1] 0.55 We can do this using
-#include &lt;iostream&gt; #include &lt;Rcpp.h&gt; using namespace Rcpp; int flip_coin(){ int n = rand() % 2; return n; } //[[Rcpp::export(mean_flips)]] NumericVector coin() { NumericVector out(100); for(i=0; i&lt;100; i++) { out[i] = flip_coin } return out; } sourceCpp(&quot;.
+    Rcpp Parallel library(Rcpp) library(microbenchmark) Consider a simple scenario. We want to flip \(100\) coins and get the results. We can do this in R, in what is an already optimized way.
+rbinom(100, 1, 0.5) ## [1] 0 1 0 0 0 1 1 0 1 1 1 0 0 1 0 0 1 0 0 0 0 0 0 0 1 1 1 0 0 0 1 0 0 1 0 0 1 ## [38] 0 0 1 0 0 0 0 1 0 1 1 0 1 0 1 0 1 1 0 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 0 0 1 ## [75] 0 1 0 1 0 1 0 1 0 1 1 0 0 1 0 1 0 1 0 0 1 0 0 0 1 0 Or we can do this using
 
     
     <a href="/post/parallel-rcpp/" class="more">Continue reading</a>

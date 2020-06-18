@@ -191,12 +191,12 @@ qr_r &lt;- lm_qr_r(X,y)
 microbenchmark(lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar),lm_naive_r(X,y), lm_chol_r(X,y), unit=&#39;relative&#39;)</code></pre>
 <pre><code>## Unit: relative
 ##                                                         expr      min        lq
-##  lm(logprod ~ tod + I(tod^2) + toy + I(toy^2), data = solar) 9.570415 10.328322
-##                                             lm_naive_r(X, y) 1.203380  1.272631
+##  lm(logprod ~ tod + I(tod^2) + toy + I(toy^2), data = solar) 9.712079 10.102526
+##                                             lm_naive_r(X, y) 1.217695  1.237893
 ##                                              lm_chol_r(X, y) 1.000000  1.000000
 ##      mean   median       uq      max neval cld
-##  6.894272 8.761025 8.249408 1.619252   100   b
-##  1.687965 1.243869 1.254070 2.151189   100  a 
+##  6.893597 8.925180 8.451878 1.505563   100   b
+##  1.684651 1.195659 1.251775 2.092183   100  a 
 ##  1.000000 1.000000 1.000000 1.000000   100  a</code></pre>
 <p>Check that the obtained estimates are the same as those given by <code>lm</code></p>
 <pre class="r"><code>max(abs(lm_r-naive_r))</code></pre>
@@ -240,9 +240,9 @@ max(abs(lm_r-chol_Rcpp))</code></pre>
 <p>Compare the <code>r</code> and the <code>RcppArmadillo</code> implementation. The <code>r</code> implementation is <span class="math inline">\(5\)</span> times slower than the <code>RcppArmadillo</code> one.</p>
 <pre class="r"><code>microbenchmark(lm_chol_r(X,y),lm_chol_Rcpp(X,y), unit=&#39;relative&#39;)</code></pre>
 <pre><code>## Unit: relative
-##                expr      min       lq    mean   median       uq       max neval
-##     lm_chol_r(X, y) 3.947805 3.976848 3.26835 3.866909 4.139795 0.3814756   100
-##  lm_chol_Rcpp(X, y) 1.000000 1.000000 1.00000 1.000000 1.000000 1.0000000   100
+##                expr      min      lq     mean   median       uq       max neval
+##     lm_chol_r(X, y) 4.018238 3.97562 2.788702 3.874183 3.839076 0.3536158   100
+##  lm_chol_Rcpp(X, y) 1.000000 1.00000 1.000000 1.000000 1.000000 1.0000000   100
 ##  cld
 ##    b
 ##   a</code></pre>
@@ -343,10 +343,10 @@ vec dmvnInt(mat &amp; X, const rowvec &amp; mu, mat &amp; L)
   lmLocal(y = y, x0 = x0[ii, ], X0 = X0[ii, ], x = x, X = X, H  = H)
 }))</code></pre>
 <pre><code>##    user  system elapsed 
-##  17.063  32.611   6.453</code></pre>
+##  17.887  35.570   7.254</code></pre>
 <pre class="r"><code>system.time(lm_local_Rcpp(y,x0,X0,x,X,H))</code></pre>
 <pre><code>##    user  system elapsed 
-##  34.514   3.767   5.010</code></pre>
+##  35.317   3.812   5.047</code></pre>
 <p>To perform weighted least squares, we simply define <span class="math inline">\(\tilde{X}=\sqrt{w}X\)</span> and <span class="math inline">\(\tilde{y}=\sqrt{w}y\)</span> and fit the linear model as before.</p>
 <!-- ```{r} -->
 <!-- lm(y~X-1, weights = w) -->

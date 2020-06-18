@@ -197,8 +197,12 @@ The inputs that we have form the first layer, and the aim is to obtain an output
     </div>
 
     
-    
+    In this portfolio we are going to focus on parallelizing code locally, so using multiple cores of the computer. To do this we use Python’s multiprocessing library, especially its Pool feature.
+We check the number of existing cores on our local machine using and note that we have 8.
+print(multiprocessing.cpu_count()) Before we even start writing our script, we must make sure to include all the libraries at the very top followed by the function definitions.
 
+    
+    <a href="/post/parallel-python/" class="more">Continue reading</a>
     
     
 </div>

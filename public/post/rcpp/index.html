@@ -219,12 +219,12 @@ muSmoothSmallRcpp &lt;- meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.02)</code>
 <p>Compare the efficiency of the two functions and note that the <code>Rcpp</code> implementation is about <span class="math inline">\(1.5\)</span> times faster.</p>
 <pre class="r"><code>microbenchmark(meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), meanKRS(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
-##                                               expr      min      lq     mean
-##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.00000 1.000000
-##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.507025 1.53083 1.545285
-##    median      uq      max neval cld
-##  1.000000 1.00000 1.000000   100  a 
-##  1.532626 1.56188 1.572384   100   b</code></pre>
+##                                               expr      min       lq     mean
+##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
+##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.512946 1.524154 1.525489
+##    median       uq      max neval cld
+##  1.000000 1.000000 1.000000   100  a 
+##  1.520617 1.536626 1.048042   100   b</code></pre>
 </div>
 <div id="q1b" class="section level3">
 <h3>Q1b</h3>
@@ -480,11 +480,11 @@ NumericVector varKRS_cpp(const NumericVector y, const NumericVector x, const Num
 <pre class="r"><code>microbenchmark(varKRS(y = y, x = x, x0 = x_new, lam = 0.06), varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
 ##                                              expr      min       lq     mean
-##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.519591 1.523923 1.580855
+##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.508201 1.515028 1.575248
 ##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
-##   median       uq      max neval cld
-##  1.53262 1.608302 5.264234   100   b
-##  1.00000 1.000000 1.000000   100  a</code></pre>
+##    median       uq      max neval cld
+##  1.529235 1.605527 5.698085   100   b
+##  1.000000 1.000000 1.000000   100  a</code></pre>
 <p>Perform cross validation using <code>R</code></p>
 <pre class="r"><code>cv_error_var &lt;- function(y, x, lambdas, k = 10) {
   # define error metric
@@ -736,7 +736,7 @@ system(&quot;R CMD INSTALL akrscv_1.0.tar.gz&quot;)</code></pre>
 <li>Install package from github using</li>
 </ol>
 <pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrs&quot;)</code></pre>
-<pre><code>## Skipping install of &#39;akrs&#39; from a github remote, the SHA1 (e43162b6) has not changed since last install.
+<pre><code>## Skipping install of &#39;akrs&#39; from a github remote, the SHA1 (47e8eccb) has not changed since last install.
 ##   Use `force = TRUE` to force installation</code></pre>
 <pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrscv&quot;)</code></pre>
 <pre><code>## Skipping install of &#39;akrscv&#39; from a github remote, the SHA1 (b38b9729) has not changed since last install.

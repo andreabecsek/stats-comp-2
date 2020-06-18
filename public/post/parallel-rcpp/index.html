@@ -127,20 +127,18 @@
 
 <div id="rcpp-parallel" class="section level2">
 <h2>Rcpp Parallel</h2>
-<pre class="r"><code>library(Rcpp)</code></pre>
-<p>Consider a simple scenario. We want to flip <span class="math inline">\(100\)</span> coins and get an estimate of the mean.
-We can do this in R</p>
-<pre class="r"><code>mean(rbinom(100, 1, 0.5))</code></pre>
-<pre><code>## [1] 0.55</code></pre>
-<p>We can do this using</p>
+<pre class="r"><code>library(Rcpp)
+library(microbenchmark)</code></pre>
+<p>Consider a simple scenario. We want to flip <span class="math inline">\(100\)</span> coins and get the results.
+We can do this in R, in what is an already optimized way.</p>
+<pre class="r"><code>rbinom(100, 1, 0.5)</code></pre>
+<pre><code>##   [1] 0 1 0 0 0 1 1 0 1 1 1 0 0 1 0 0 1 0 0 0 0 0 0 0 1 1 1 0 0 0 1 0 0 1 0 0 1
+##  [38] 0 0 1 0 0 0 0 1 0 1 1 0 1 0 1 0 1 1 0 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 0 0 1
+##  [75] 0 1 0 1 0 1 0 1 0 1 1 0 0 1 0 1 0 1 0 0 1 0 0 0 1 0</code></pre>
+<p>Or we can do this using</p>
 <pre class="cpp"><code>#include &lt;iostream&gt;
 #include &lt;Rcpp.h&gt;
 using namespace Rcpp;
-
-int flip_coin(){
-  int n = rand() % 2;
-  return n;
-}
 
 //[[Rcpp::export(mean_flips)]]
 NumericVector coin()
@@ -148,15 +146,97 @@ NumericVector coin()
   NumericVector out(100);
   for(i=0; i&lt;100; i++)
   {
-    out[i] = flip_coin
+    out[i] = rand() % 2;
+  }
+  return mean(out);
+}</code></pre>
+<p>If we source and run the code it seems to be working fine</p>
+<pre class="r"><code>sourceCpp(&quot;../code/coin_rcpp.cpp&quot;)
+flips()</code></pre>
+<pre><code>##   [1] 1 0 0 1 1 1 1 1 1 0 1 0 0 0 1 1 0 0 0 1 1 0 0 0 0 1 0 0 1 0 0 1 1 0 0 0 1
+##  [38] 1 1 1 1 0 1 1 1 1 0 1 1 1 0 0 1 0 0 1 0 1 0 1 1 0 0 0 0 0 1 1 1 0 0 1 1 0
+##  [75] 0 0 1 1 1 0 0 1 0 1 0 1 0 0 0 0 1 1 0 0 0 0 0 1 0 0</code></pre>
+<p>Moreover, comparing it to the R version it actually takes a lot more time. This is because the <code>binom</code> function is already really well optimized. But for the sake of this demonstration we carry on and see what happens.</p>
+<pre class="r"><code>microbenchmark(rbinom(100, 1, 0.5),
+               flips(),
+               times = 10,
+               unit=&#39;relative&#39;)</code></pre>
+<pre><code>## Unit: relative
+##                 expr      min       lq        mean   median       uq
+##  rbinom(100, 1, 0.5) 1.374089 1.344902 0.004381999 1.313567 1.524435
+##              flips() 1.000000 1.000000 1.000000000 1.000000 1.000000
+##           max neval cld
+##  0.0008669474    10   a
+##  1.0000000000    10   a</code></pre>
+<p>Let’s explore whether this could be improved upon by running the code in parallel. We do this using <code>OpenMP</code> and <code>RcppParallel</code>. To do so there are a few changes we need to make to the code:</p>
+<ul>
+<li>include the <code>RcppParallel</code> header</li>
+<li>include the dependency of <code>openmp</code> and <code>RcppParallel</code></li>
+<li>define the input and output via special wrappers that are thread-safe</li>
+</ul>
+<p>The actual code looks like this</p>
+<pre class="cpp"><code>#include &lt;iostream&gt;
+#include &lt;Rcpp.h&gt;
+#include &lt;RcppParallel.h&gt;
+using namespace Rcpp;
+
+// [[Rcpp::plugins(openmp)]]
+// [[Rcpp::depends(RcppParallel)]]
+
+//[[Rcpp::export(flips_par)]]
+NumericVector coin(int ncores)
+{
+  NumericVector out(100);
+  RcppParallel::RVector&lt;double&gt; vo(out);
+  
+#if defined(_OPENMP)
+  #pragma omp parallel for num_threads(ncores)
+#endif
+  
+  for(int i=0; i&lt;100; i++)
+  {
+    vo[i] = rand() % 2;
   }
   return out;
-}</code></pre>
-<pre class="r"><code>sourceCpp(&quot;../code/coin_rcpp.cpp&quot;)</code></pre>
-<pre class="r"><code>mean_flips()</code></pre>
-<pre><code>##   [1] 0 0 0 1 1 0 1 0 0 0 1 1 0 0 0 1 1 0 0 1 1 1 0 1 0 0 0 1 0 1 0 0 1 0 1 0 0
-##  [38] 1 1 0 1 0 1 1 0 1 0 1 1 0 0 1 0 1 0 0 1 0 1 1 1 1 0 0 1 1 1 1 0 0 1 0 0 0
-##  [75] 1 0 1 0 0 0 0 0 1 0 1 1 0 0 1 1 0 0 0 0 1 1 1 0 0 0</code></pre>
+}
+</code></pre>
+<p>Checking that the code does indeed work</p>
+<pre class="r"><code>sourceCpp(&quot;../code/coin_parallel.cpp&quot;)
+flips_par(3)</code></pre>
+<pre><code>##   [1] 0 0 1 1 1 0 0 1 1 0 0 1 1 0 0 0 1 1 0 1 1 1 1 1 1 1 0 0 1 1 1 0 1 0 1 1 0
+##  [38] 0 1 0 0 1 0 1 1 1 1 1 0 0 1 0 0 0 1 1 0 1 1 1 0 1 1 0 1 0 1 1 0 1 1 0 0 1
+##  [75] 0 0 1 0 1 0 1 0 0 1 1 1 1 0 0 1 0 0 0 1 0 1 0 1 0 1</code></pre>
+<p>Let’s see how using a different number of cores changes the performance. Clearly the more cores we add, the more time it takes for the computation to be performed. This is a common mistake that can be made if we are overly keen to parallelize an operation without further thought. What happens is that the operation itself takes way less time than the parallelization process.</p>
+<pre class="r"><code>microbenchmark(rbinom(100, 1, 0.5),
+               flips_par(1),
+               flips_par(3),
+               flips_par(6),
+               flips_par(8),
+               times = 10,
+               unit = &#39;relative&#39;)</code></pre>
+<pre><code>## Unit: relative
+##                 expr      min        lq     mean    median         uq
+##  rbinom(100, 1, 0.5) 1.155596  1.184559  1.28878  1.133189   1.226317
+##         flips_par(1) 1.000000  1.000000  1.00000  1.000000   1.000000
+##         flips_par(3) 3.135921  3.963155  4.21689  4.113875   4.376394
+##         flips_par(6) 4.380144  4.105845 35.62260  4.878631  17.429338
+##         flips_par(8) 4.980505 15.354714 92.07621 92.420890 163.029507
+##         max neval cld
+##    1.892990    10  a 
+##    1.000000    10  a 
+##    5.225209    10  a 
+##  229.146752    10  ab
+##  172.276013    10   b</code></pre>
+<p>To understand more exactly what parallelization involves, let’s take a look at the actual function that is used. Note how it takes the beginning and end of a for loop, the worker and the number of minimum number of iterations to be performed by a thread.</p>
+<pre class="cpp"><code>void parallelFor(std::size_t begin,
+                 std::size_t end, 
+                 Worker&amp; worker,
+                 std::size_t grainSize = 1)</code></pre>
+<!-- ## Reductions -->
+<!-- Let's create a reduction that finds the number of prime numbers in a sequence. -->
+<!-- ```{r} -->
+<!-- sourceCpp("../code/is_prime.cpp") -->
+<!-- ``` -->
 </div>
 
     

@@ -125,7 +125,181 @@
     
 
 
+<p>In this portfolio we are going to focus on parallelizing code locally, so using multiple cores of the computer. To do this we use Python’s <code>multiprocessing</code> library, especially its <code>Pool</code> feature.</p>
+<p>We check the number of existing cores on our local machine using and note that we have <code>8</code>.</p>
+<pre class="python"><code>print(multiprocessing.cpu_count())</code></pre>
+<p>Before we even start writing our script, we must make sure to include all the libraries at the very top followed by the function definitions. To ensure that we are only running the main copy of the script we use <code>f __name__ == &quot;__main__&quot;:</code>.</p>
+<div id="basic-mapreduce-using-pool" class="section level3">
+<h3>Basic map/reduce using Pool</h3>
+<p>Let’s create a basic function that returns the number of primes up to some integer.</p>
+<pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process
+from functools import reduce
 
+def is_prime(x):
+    &quot;&quot;&quot;Function to compute wether a number is prime or not&quot;&quot;&quot;
+    isprime = 1;
+    
+    for i in range(2, x//2):
+        if x%i==0: 
+            isprime = 0
+            break
+    print(f&quot;Worker {current_process().pid} decided whether {x} is prime&quot;)
+    return isprime
+
+if __name__ == &quot;__main__&quot;:
+    # create a pool of workers
+    with Pool(processes=5) as pool:
+        nums = range(1,21)
+        are_primes = pool.map(is_prime, nums)
+        
+    total_primes = reduce(lambda x, y: x+y, are_primes)
+    print(f&quot;The number of total primes between 1 and 20 is: {total_primes}&quot;)</code></pre>
+<ul>
+<li>by default <code>Pool() as pool</code> uses the total available cores, but we can control this using <code>processes=</code> as seen above.</li>
+<li><code>current_process().pid</code> returns the worker is. Note that there are indeed <code>5</code> different workers performing the tasks.</li>
+<li><code>pool.map(is_prime,nums)</code> applies the <code>is_prime</code> function to all the specified values by splitting the task across the given cores.</li>
+<li><code>reduce(lambda x, y: x+y, are_primes)</code> sums up all the values from the result by aggregating them one at a time.</li>
+</ul>
+<p><img src="/post/2020-06-17-parallel-python_files/primes.png" /></p>
+</div>
+<div id="pool-mapreduce-for-functions-with-multiple-arguments" class="section level3">
+<h3>Pool map/reduce for functions with multiple arguments</h3>
+<p>If we want to map a function with multiple arguments we can use <code>Pool.starmap</code> instead. It takes as as input a list of tuples, and applies the specified function to the elements of every individual tuple.</p>
+<p>Let’s now create a function that finds the number of primes between two integers. Then we use <code>Pool.startmap</code> to apply this function to the pairs of specified starting and end values. To do so we have used the <code>zip</code> function to combine the two lists into pairs.</p>
+<pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process
+from functools import reduce
+
+def is_prime(x):
+    &quot;&quot;&quot;Function to compute wether a number is prime or not&quot;&quot;&quot;
+    isprime = 1;
+    
+    for i in range(2, x//2):
+        if x%i==0: 
+            isprime = 0
+            break
+    return isprime
+
+def count_primes(start, end):
+    &quot;&quot;&quot;Function that returns the number of primes between two integers.&quot;&quot;&quot;
+    count = 0
+    
+    for i in range(start, end):
+        if is_prime(i) == 1:
+            count = count + 1
+    print(f&quot;Worker {current_process().pid} decided the number of primes between {start} and {end}&quot;)        
+    return count
+
+starting_values = [2,10,30]
+end_values = [3, 20, 60]
+    
+    
+if __name__ == &quot;__main__&quot;:
+    # create a pool of workers
+    with Pool(processes=5) as pool:
+        prime_counts = pool.starmap(count_primes, zip(starting_values, end_values))
+
+    print(prime_counts)</code></pre>
+<p><img src="/post/2020-06-17-parallel-python_files/count_primes.png" /></p>
+</div>
+<div id="asynchronous-functions-and-futures" class="section level3">
+<h3>Asynchronous Functions and Futures</h3>
+<p>We are interested using the workers for different functions. There are two main options:</p>
+<ul>
+<li><code>pool.apply</code>: run function in a separate process, but wait for the current process to finish first; only then does the master get unlocked</li>
+<li><code>pool.apply_async</code>: workers perform different function calls and unblock master as soon as they finish.</li>
+</ul>
+<p>An example of this would be</p>
+<pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process
+import time
+
+def is_prime(x):
+    &quot;&quot;&quot;Function to compute wether a number is prime or not&quot;&quot;&quot;
+    isprime = 1;
+    
+    for i in range(2, x//2):
+        if x%i==0: 
+            isprime = 0
+            break
+    return isprime
+
+def count_primes(start, end):
+    &quot;&quot;&quot;Function that returns the number of primes between two integers.&quot;&quot;&quot;
+    print(f&quot;Worker {current_process().pid} started computing the number of primes between {start} and {end}&quot;)  
+    
+    count = 0
+    for i in range(start, end):
+        if is_prime(i) == 1:
+            count = count + 1
+            
+    print(f&quot;Worker {current_process().pid} decided the number of primes between {start} and {end}. It is {count}.&quot;)      
+    return count
+
+    
+if __name__ == &quot;__main__&quot;:
+    print(f&quot;Master process is PID {current_process().pid}&quot;)
+    # create a pool of workers
+    with Pool() as pool:
+        result1=pool.apply_async(count_primes, [2,3])
+        result2=pool.apply_async(count_primes, [2,10])
+        
+        result1.wait()
+        result2.wait()
+        print(f&quot;The results are {result1.get()} and {result2.get()}.&quot;)
+      </code></pre>
+<p><img src="/post/2020-06-17-parallel-python_files/async_res.png" /></p>
+<p>We create two different processes using <code>.apply_async</code> and from the output we see that the first worker starts applying the function and the control is immediately given back to the master process, which initiates the second worker. So now they are both working in parallel.</p>
+<p>Note how we used <code>.wait</code> before printing the outputs using <code>.get</code>. This is an example of a function applied to a <code>future</code> variable type, which is a placeholder for a result that will only be available in the future. Some functions that can be applied to futures are:</p>
+<ul>
+<li>.<code>wait()</code>: wait until result is available</li>
+<li><code>.ready</code>: check if result is available</li>
+<li><code>.get()</code>: get result</li>
+</ul>
+</div>
+<div id="asynchronous-mapping" class="section level3">
+<h3>Asynchronous mapping</h3>
+<p>The main problem with <code>.apply_async</code> is that it is quite tedious to apply if we have multiple functions that we want to apply. This is where <code>.starmap_async</code> steps in.</p>
+<p>We are going to count the number of primes between 1 and 200 by splitting the interval into equal chunks. At the end, we use a reduction to find the total count of primes.</p>
+<pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process
+from functools import reduce
+
+def is_prime(x):
+    &quot;&quot;&quot;Function to compute wether a number is prime or not&quot;&quot;&quot;
+    isprime = 1;
+    
+    for i in range(2, x//2):
+        if x%i==0: 
+            isprime = 0
+            break
+    return isprime
+
+def count_primes(start, end):
+    &quot;&quot;&quot;Function that returns the number of primes between two integers.&quot;&quot;&quot;
+    print(f&quot;Worker {current_process().pid} started computing the number of primes between {start} and {end-1}&quot;) 
+    
+    count = 0
+    for i in range(start, end):
+        if is_prime(i) == 1:
+            count = count + 1
+            
+    print(f&quot;Worker {current_process().pid} decided the number of primes between {start} and {end-1}. It is {count}.&quot;)        
+    return count
+
+starting_values = [1,50,100,150]
+end_values = [50, 100, 150, 201]
+    
+    
+if __name__ == &quot;__main__&quot;:
+    # create a pool of workers
+    with Pool(processes=5) as pool:
+        prime_counts_future = pool.starmap_async(count_primes, zip(starting_values, end_values))
+
+        prime_counts_future.wait()
+        
+    total_prime_counts = reduce(lambda x,y: x+y, prime_counts_future.get())
+    print(total_prime_counts)</code></pre>
+<p><img src="/post/2020-06-17-parallel-python_files/async_map.png" /></p>
+<p>We once again note the asynchronous behaviour, and the functions are clearly all running in parallel.</p>
+</div>
 
     
 </div>

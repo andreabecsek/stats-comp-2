@@ -7,9 +7,7 @@ categories: []
 tags: []
 ---
 
-OpenMP is an interface that provides support for parallel programming. 
-
-The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
+OpenMP is an interface that provides support for parallel programming. The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
 
 We wrote the `hello.cpp` code and compiled it.
 ```{Rcpp eval=FALSE}
@@ -26,9 +24,7 @@ int main()
 }  
 ```
 
-Note that we included a single new line, `#pragma omp parallel` which simply mentions that the code between the brackets is what we aim to parallelize.
-
-And we compile the program using
+Note that we included a single new line, `#pragma omp parallel` which simply mentions that the code between the brackets is what we aim to parallelize. We compile the program using
 ```{bash eval=FALSE}
 g++ -fopenmp hello_openmp.cpp -o hello_openm
 ```
@@ -36,6 +32,7 @@ g++ -fopenmp hello_openmp.cpp -o hello_openm
 Now, we set the number of threads to $3$ using the `OMP_NUM_THREADS` variable and execute the file. The code has indeed been run $3$ times.
 ![](/post/2020-06-17-introduction-to-openmp_files/hellomp.png)
 
+We are now going to examine a few of these types of directives.
 ### Directives
 
 In general code is executed one line at a time, beginning with the main function. While usually there is a single main thread, what the `#pragma` commands do is split the given code into multiple threads. Then each thread executes the specified code in parallel. 
@@ -134,7 +131,7 @@ Compiling and executing this code has actually no return. It is purely for demon
 
 #### Reductions
 
-Reductions combine multiple subcalculations into one after every calculations. This way we don't have to store all the results until the end.
+Reductions combine multiple subcalculations into one after every calculation. This way we don't have to store all the results until the end.
 
 Let's estimate the mean of $100$ coin flips.
 ```{Rcpp eval=FALSE}

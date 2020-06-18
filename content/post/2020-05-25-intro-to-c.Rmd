@@ -206,7 +206,7 @@ Notes:
 * Multiple functions can share the same name, but use different parameters. However, the functions definition must be the same. For example, we might want to use the `sum` function to sum both integers and doubles. 
 
 ### Variable Scopes
-The scope of a variable is the region of the program that can see and access that variable. There are tWO main such regions:
+The scope of a variable is the region of the program that can see and access that variable. There are two main such regions:
 
 * *local*: inside a function 
 * *global*: outside of all functions

@@ -16,8 +16,7 @@
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/deep-learning/</guid>
-      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.
-The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
+      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons. The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
     </item>
     
   </channel>

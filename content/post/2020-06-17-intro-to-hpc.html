@@ -15,40 +15,39 @@ tags:
 <p>High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.</p>
 <div id="logging-in" class="section level2">
 <h2>Logging in</h2>
-<div id="setting-vpn-if-not-on-university-premises" class="section level4">
-<h4>Setting VPN (if not on university premises)</h4>
+<div id="setting-up-vpn-if-not-on-university-premises" class="section level4">
+<h4>Setting up VPN (if not on university premises)</h4>
 <p>If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:</p>
 <ol style="list-style-type: decimal">
 <li>Go to <a href="https://uobnet2.bristol.ac.uk" class="uri">https://uobnet2.bristol.ac.uk</a> and sign in.</li>
 <li>If this is the first time you do this on your computer then you need to install F5 Network Acess. There will be a link to download it on the website.</li>
-<li>If you have already done step 2. before then you will be shown a prompt to launch the application.</li>
+<li>If you have already done step 2 before you will be shown a prompt to launch the application.</li>
 </ol>
 <p>Once you are connected you should see this window</p>
 <p><img src="/post/2020-06-17-intro-to-hpc_files/vpn.png" /></p>
 </div>
 <div id="log-in-using-ssh" class="section level4">
 <h4>Log in using ssh</h4>
-<p>Now you are ready to log into the cluster using <code>ssh</code>. On Linux you simply use the terminal and type the following</p>
+<p>Now you are ready to log into the cluster using <code>ssh</code>. On Linux you simply use the terminal and type the following (and enter your password if needed).</p>
 <pre class="bash"><code>ssh -X ky19161@bluecrystalp3.acrc.bris.ac.uk</code></pre>
 <p>Note: the <code>-X</code> flag allows us to run graphical applications remotely but for them to be displayed locally.</p>
 </div>
 <div id="copy-files-to-and-from-cluster" class="section level4">
 <h4>Copy files to and from cluster</h4>
-<p>At some point you will most definitely need to transfer data or source code from your computer to the cluster. Note that the cluster is not intended for long-term file storage, so anything that you leave there has no guarantee that it will remain there. For that reason make sure you always transfer your results back to your local machine. For storage purposes you could instead visit <a href="http://www.bristol.ac.uk/acrc/research-data-storage-facility/" class="uri">http://www.bristol.ac.uk/acrc/research-data-storage-facility/</a>.</p>
-<p>We use <code>scp</code>, which stands for <code>secure copy protocol</code>, and we always do this from within our local machine</p>
+<p>At some point you will most definitely need to transfer data or source code from your computer to the cluster. Note that the cluster is not intended for long-term file storage, so anything that you leave there has no guarantee that it will remain there. For that reason make sure you always transfer your results back to your local machine. To check you file storage quota you can use: <code>pan_quota</code> and it shows the result in bytes.</p>
+<p>We use <code>scp</code>, which stands for <code>secure copy protocol</code>, and we always do this from our local machine.</p>
 <ul>
-<li><p>copy from local to remote:
+<li><p>copy from local to remote home directory:
 <code>scp data.r ky19161@bluecrystalp3.acrc.bris.ac.uk:~</code></p></li>
-<li><p>copy from remote to local:
+<li><p>copy from remote to local current directory:
 <code>scp ky19161@bluecrystalp3.acrc.bris.ac.uk:data.r .</code></p></li>
 </ul>
-<p>To check you file storage quota you can use: <code>pan_quota</code> and it shows the result in bytes.</p>
 <p><strong>Advice for file usage</strong>: using a few larger files helps the job run faster than many small ones. This is because locating files on the cluster takes quite a bit of time.</p>
 </div>
 </div>
 <div id="environment-modules" class="section level2">
 <h2>Environment Modules</h2>
-<p>BlueCrystal has an environment modules package which enables one to customize their environment. What is perhaps the most important is that you must always make sure that the module is loaded. The main commands to do this are:</p>
+<p>BlueCrystal has an environment modules package which enables one to customize their environment. What is perhaps the most important is that you must always make sure that the required modules are loaded. The main commands to do this are:</p>
 <ul>
 <li><code>module avail</code>: list available modules</li>
 <li><code>module list</code>: list loaded modules</li>
@@ -56,7 +55,7 @@ tags:
 <li><code>module del</code>: remove module</li>
 <li><code>module whatis</code>: details about the module</li>
 </ul>
-<p>It is recommended that you include the required modules in your shell startup file <code>.bashrc</code>. However, make sure you know what you are doing beforehand and don’t modify anything else.</p>
+<p>It is recommended that you include the required modules in your shell startup file <code>.bashrc</code>. However, make sure you know what you are doing beforehand and don’t modify anything else just yet.</p>
 <p>For example, if you want to use <code>R</code> and <code>Python</code> your <code>.bashrc</code> should inclue</p>
 <pre class="bash"><code>module add languages/R-3.0.2
 module add languages/python-3.3.2</code></pre>
@@ -64,10 +63,10 @@ module add languages/python-3.3.2</code></pre>
 <div id="how-to-run-a-job" class="section level2">
 <h2>How to run a job</h2>
 <ol style="list-style-type: decimal">
-<li>Include the required modules in your <code>.bashrc</code></li>
-<li>Compile code if needed</li>
+<li>Include the required modules in your <code>.bashrc</code>.</li>
+<li>Compile code if needed.</li>
 <li>Copy scripts or data to the cluster.</li>
-<li>Create job submission script</li>
+<li>Create job submission script.</li>
 <li>Submit job script to queuing system.</li>
 </ol>
 <div id="queuing-system" class="section level4">
@@ -104,7 +103,7 @@ time ./my-serial-program</code></pre>
 </div>
 <div id="example" class="section level2">
 <h2>Example</h2>
-<p>We have the following script that we want to run.</p>
+<p>We have the following script that we want to run. This is a similar script to the one in the Linux portfolio. It takes the specified text files and returns the top most common words in different files, except for the specified stop words (for, at, a etc).</p>
 <pre class="bash"><code>#!/bin/bash
 
 for text_file in Alices_Adventures_in_Wonderland.txt Metamorphosis.txt The_Impo\
@@ -117,7 +116,6 @@ do
                 uniq -c|sort -n | fgrep -vwf stop_words.txt | tail -n 15 &gt;&gt; $file_name
 
 done</code></pre>
-<p>This is a similar script to the one in the Linux portfolio. It takes the specified text files and returns the top most common words in different files, except for the specified stop words (for, at, a etc).</p>
 <p>To run this, we need to upload it to the remote directory together with the stop words file and the text files.
 <img src="/post/2020-06-17-intro-to-hpc_files/scp.png" /></p>
 <p>Next we log into the server using ssh and note that all the required files are now in the book directory.
@@ -143,12 +141,13 @@ echo JOB ID: $PBS_JOBID
 echo Working Directory: `pwd`
 
 # Execute code 
-$EXE</code></pre>
+$EXE
+time most_used_words.sh </code></pre>
 <p>We submit the job, and check its status. The status can be seen under the <code>S</code> column as <code>Q</code> for Queued, <code>R</code> for Running and <code>C</code> for Completed. Once the job finishes we obtain the new files that contain the top word counts and two additional files.
 <img src="/post/2020-06-17-intro-to-hpc_files/qstat_done.png" /></p>
 <p>The <code>.e</code> file contains the running time in this case. But it can contain errors.
 <img src="/post/2020-06-17-intro-to-hpc_files/efile.png" /></p>
-<p>The <code>.o</code> file has the outputs that we have printed as part of out submission script (workind directory and node) and the actual code (input and output file names).
+<p>The <code>.o</code> file has the outputs that we have printed as part of our submission script (workind directory and node) and the actual code (input and output file names).
 <img src="/post/2020-06-17-intro-to-hpc_files/ofile.png" /></p>
 <p>While we have only examined how to submit a serial job, the HPC facilities are perhaps even more usefull for parallel jobs.</p>
 </div>

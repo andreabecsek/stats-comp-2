@@ -38,7 +38,7 @@ head(solar)</code></pre>
 <p>Fitting this model in <code>R</code></p>
 <pre class="r"><code>fit &lt;- lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar)
 lm_r &lt;- fit$coefficients</code></pre>
-<p>Fit the same model using <code>Rcpp</code>. First set the model matrix and output variable is</p>
+<p>Fit the same model using <code>Rcpp</code>. First set the model matrix and output variable</p>
 <pre class="r"><code>X &lt;- with(solar,cbind(1,tod,tod^2,toy,toy^2))
 y &lt;- solar$logprod</code></pre>
 <p>Using cholesky factorisation to solve the linear system
@@ -67,14 +67,14 @@ qr_r &lt;- lm_qr_r(X,y)
 
 microbenchmark(lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar),lm_naive_r(X,y), lm_chol_r(X,y), unit=&#39;relative&#39;)</code></pre>
 <pre><code>## Unit: relative
-##                                                         expr      min        lq
-##  lm(logprod ~ tod + I(tod^2) + toy + I(toy^2), data = solar) 9.712079 10.102526
-##                                             lm_naive_r(X, y) 1.217695  1.237893
-##                                              lm_chol_r(X, y) 1.000000  1.000000
-##      mean   median       uq      max neval cld
-##  6.893597 8.925180 8.451878 1.505563   100   b
-##  1.684651 1.195659 1.251775 2.092183   100  a 
-##  1.000000 1.000000 1.000000 1.000000   100  a</code></pre>
+##                                                         expr      min       lq
+##  lm(logprod ~ tod + I(tod^2) + toy + I(toy^2), data = solar) 9.655584 9.367193
+##                                             lm_naive_r(X, y) 1.178846 1.219968
+##                                              lm_chol_r(X, y) 1.000000 1.000000
+##      mean   median       uq       max neval cld
+##  2.307733 8.561529 7.566472 0.9823121   100   b
+##  1.047871 1.253367 1.204918 1.1942456   100  a 
+##  1.000000 1.000000 1.000000 1.0000000   100  a</code></pre>
 <p>Check that the obtained estimates are the same as those given by <code>lm</code></p>
 <pre class="r"><code>max(abs(lm_r-naive_r))</code></pre>
 <pre><code>## [1] 1.457252e-10</code></pre>
@@ -117,12 +117,12 @@ max(abs(lm_r-chol_Rcpp))</code></pre>
 <p>Compare the <code>r</code> and the <code>RcppArmadillo</code> implementation. The <code>r</code> implementation is <span class="math inline">\(5\)</span> times slower than the <code>RcppArmadillo</code> one.</p>
 <pre class="r"><code>microbenchmark(lm_chol_r(X,y),lm_chol_Rcpp(X,y), unit=&#39;relative&#39;)</code></pre>
 <pre><code>## Unit: relative
-##                expr      min      lq     mean   median       uq       max neval
-##     lm_chol_r(X, y) 4.018238 3.97562 2.788702 3.874183 3.839076 0.3536158   100
-##  lm_chol_Rcpp(X, y) 1.000000 1.00000 1.000000 1.000000 1.000000 1.0000000   100
-##  cld
-##    b
-##   a</code></pre>
+##                expr      min       lq     mean   median       uq       max
+##     lm_chol_r(X, y) 3.966442 3.945644 3.263578 3.823833 3.841238 0.5422546
+##  lm_chol_Rcpp(X, y) 1.000000 1.000000 1.000000 1.000000 1.000000 1.0000000
+##  neval cld
+##    100   b
+##    100  a</code></pre>
 <p>To understand whether the polynomial fit is a good model choice, we note that the second plot captures a non-linearity of the residuals.</p>
 <pre class="r"><code>solar$fitPoly &lt;- fit$fitted.values
 
@@ -220,10 +220,10 @@ vec dmvnInt(mat &amp; X, const rowvec &amp; mu, mat &amp; L)
   lmLocal(y = y, x0 = x0[ii, ], X0 = X0[ii, ], x = x, X = X, H  = H)
 }))</code></pre>
 <pre><code>##    user  system elapsed 
-##  17.887  35.570   7.254</code></pre>
+##  18.692  38.748   7.869</code></pre>
 <pre class="r"><code>system.time(lm_local_Rcpp(y,x0,X0,x,X,H))</code></pre>
 <pre><code>##    user  system elapsed 
-##  35.317   3.812   5.047</code></pre>
+##  43.681   5.699   6.906</code></pre>
 <p>To perform weighted least squares, we simply define <span class="math inline">\(\tilde{X}=\sqrt{w}X\)</span> and <span class="math inline">\(\tilde{y}=\sqrt{w}y\)</span> and fit the linear model as before.</p>
 <!-- ```{r} -->
 <!-- lm(y~X-1, weights = w) -->

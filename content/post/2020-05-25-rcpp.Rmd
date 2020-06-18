@@ -699,7 +699,7 @@ One might think that it is a good idea to call the `C++` functions from an `R` p
 ```{Rcpp eval=FALSE}
 #include <Rcpp.h>
 
-// [[Rcpp::interfaces(cpp)]]
+// [[Rcpp::interfaces(R, cpp)]]
 
 using namespace Rcpp;
 
@@ -782,14 +782,24 @@ Note: If the man file for a function does not appear, do not write it by hand. R
 Let's check if the function does indeed work.
 
 1. Install package from github using
-```{r}
-devtools::install_github("andreabecsek/akrs")
-devtools::install_github("andreabecsek/akrscv")
+```{r message=FALSE, wraning=FALSE}
+devtools::install_github("andreabecsek/akrs", force=TRUE)
+devtools::install_github("andreabecsek/akrscv", force=TRUE)
 ```
 
-Use the package functions and 
-```{r eval=FALSE}
-akrs::varKRS_cpp(y,x,x_new,0.2)
-akrscv::cv_meanKRS_cpp(y,x,lambdas=seq(0.1,1, by=0.01),10)
+Use the package functions to check whether they give the right results
+```{r warning=FALSE}
+R_result <- meanKRS(y = y, x = x, x0 = x_new, lam = 0.06)
+package_result <- akrs::meanKRS_cpp(y,x,x_new,0.06)
+mean(abs(R_result-package_result))
 ```
 
+Check `akrscv` package. Note that the results given by the two methods are no longer similar to machine precision, this is because cross-validation multiple probabilitic choices, so we cannot expect the same results.
+```{r message=FALSE, warning=FALSE}
+lambdas <- seq(0.001, 0.025, length.out = 50)
+R_cv_result <- cv_error(y, x, lambdas, 10)
+package_cv_result <- akrscv::cv_meanKRS_cpp(y,x,lambdas, 10)
+mean(abs(R_cv_result-package_cv_result))
+```
+
+Both packages seem to be working fine and to be giving the correct results.

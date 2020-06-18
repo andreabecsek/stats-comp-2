@@ -134,14 +134,11 @@
 
 <div id="introduction-to-neural-networks" class="section level2">
 <h2>Introduction to Neural Networks</h2>
-<p>Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.</p>
-The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.
+<p>Neural Networks are learning algorithms inspired by the connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons. The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other. Every neuron receives a set of inputs, which are weighted, summed and passed through an activation function, often a sigmoid.</p>
 <center>
 <img src="/post/2020-06-17-deep-learning_files/nn.png" width="300" height="200" />
 </center>
-<p>Breaking it down, every neuron receives a set of inputs, which are weighted, summed and passed through an activation function, often a sigmoid.</p>
-<p>We are going to run through a small example using the fashion MNIST database, which contains greyscale images of various fashion items.</p>
-<p>For this purpose we are going to use Tensorflow and Keras.</p>
+<p>We are going to run through a small example using the fashion MNIST database, which contains greyscale images of various fashion items. For this purpose we are going to use Tensorflow and Keras.</p>
 <p>Let’s break it down step by step. We first import <code>Tensorflow</code>, load the training and test datasets from the library.</p>
 <pre class="python"><code>import tensorflow as tf
 
@@ -153,7 +150,7 @@ dataset = tf.keras.datasets.fashion_mnist.load_data()
 <pre class="python"><code># Convert labels using one hot encoding
 y_train = tf.keras.utils.to_categorical(y_train)
 y_test = tf.keras.utils.to_categorical(y_test)</code></pre>
-<p>Now, our images are in 2D, so we need to flatten them into 1D arrays</p>
+<p>Now, our images are in 2D, so we need to flatten them into 1D arrays.</p>
 <pre class="python"><code># Convert input images to 1D
 x_train = x_train.reshape(x_train.shape[0], -1) /255
 x_test = x_test.reshape(x_test.shape[0], -1) /255</code></pre>
@@ -164,22 +161,30 @@ model = tf.keras.models.Sequential()
 # First hidden layer with 8 neurons
 n_neurons = 8
 n_classes = 10
-model.add(tf.keras.layers.Dense(n_neurons, input_dim=784, activation=&#39;relu&#39;))
+model.add(tf.keras.layers.Dense(n_neurons, 
+                                input_dim=784, 
+                                activation=&#39;relu&#39;))
 
 # Add output layer
-model.add(tf.keras.layers.Dense(n_classes, activation=&#39;softmax&#39;))</code></pre>
+model.add(tf.keras.layers.Dense(n_classes, 
+                                activation=&#39;softmax&#39;))</code></pre>
 <p>We must describe the specifics of training the model. The optimiser that we use is <code>adam</code>, the <code>categorical_crossentropy</code> loss function computes the cross-entropy between the predicted and actual class labels.</p>
 <pre class="python"><code># Specify how to train model
-model.compile(loss=&#39;categorical_crossentropy&#39;, optimizer=&#39;adam&#39;, metrics=&#39;accuracy&#39;)</code></pre>
-<p>Finally, we fit the model using a 30/70 validation split and <code>5</code> epochs. An epoch is a breakdown of the data that can be passed through the model one batch at a time until the entire training dataset has been seen once. However, we are exposing the network to the entire dataset <code>5</code> times in this case so it gets to know it better.</p>
+model.compile(loss=&#39;categorical_crossentropy&#39;, 
+              optimizer=&#39;adam&#39;, 
+              metrics=&#39;accuracy&#39;)</code></pre>
+<p>Finally, we fit the model using a 30/70 validation split and <code>5</code> epochs. An epoch is a breakdown of the data that can be passed through the model one batch at a time until the entire training dataset has been seen once. However, we are exposing the network to the entire dataset <code>5</code> times in this case so.</p>
 <pre class="python"><code># Fit model
 n_epochs=5
-model.fit(x_train, y_train, epochs=n_epochs, validation_split=0.3)</code></pre>
-<p>Let’s see how the model performs on the training data
+model.fit(x_train, 
+          y_train, 
+          epochs=n_epochs, 
+          validation_split=0.3)</code></pre>
+<p>Let’s see how the model performs on the training data. After the final epoch, we see that the accuracy is at around <code>83.6%</code>, which is pretty good.
 <img src="/post/2020-06-17-deep-learning_files/epochs.png" /></p>
-<p>After the final epoch, we see that the accuracy is at around <code>83.6%</code>, which is pretty good.</p>
 <p>How about the performance on the test set? <code>82.22%</code>. That is still not bad given how basic this implementation is.</p>
-<pre class="python"><code>model.evaluate(x_test,y_test)[1]</code></pre>
+<pre class="python"><code># Evaluate model
+model.evaluate(x_test,y_test)[1]</code></pre>
 <p><img src="/post/2020-06-17-deep-learning_files/final_acc.png" /></p>
 </div>
 

@@ -14,12 +14,12 @@ High performance computing is a way to process data much faster than a single co
 
 ## Logging in
 
-#### Setting VPN (if not on university premises)
+#### Setting up VPN (if not on university premises)
 If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
 
 1. Go to https://uobnet2.bristol.ac.uk and sign in.
 2. If this is the first time you do this on your computer then you need to install F5 Network Acess. There will be a link to download it on the website.
-3. If you have already done step 2. before then you will be shown a prompt to launch the application.
+3. If you have already done step 2 before you will be shown a prompt to launch the application.
 
 Once you are connected you should see this window
 
@@ -27,7 +27,7 @@ Once you are connected you should see this window
 
 #### Log in using ssh
 
-Now you are ready to log into the cluster using `ssh`. On Linux you simply use the terminal and type the following
+Now you are ready to log into the cluster using `ssh`. On Linux you simply use the terminal and type the following (and enter your password if needed).
 ```{bash eval=FALSE}
 ssh -X ky19161@bluecrystalp3.acrc.bris.ac.uk
 ```
@@ -35,23 +35,22 @@ ssh -X ky19161@bluecrystalp3.acrc.bris.ac.uk
 Note: the `-X` flag allows us to run graphical applications remotely but for them to be displayed locally.
 
 #### Copy files to and from cluster
-At some point you will most definitely need to transfer data or source code from your computer to the cluster. Note that the cluster is not intended for long-term file storage, so anything that you leave there has no guarantee that it will remain there. For that reason make sure you always transfer your results back to your local machine. For storage purposes you could instead visit http://www.bristol.ac.uk/acrc/research-data-storage-facility/.
+At some point you will most definitely need to transfer data or source code from your computer to the cluster. Note that the cluster is not intended for long-term file storage, so anything that you leave there has no guarantee that it will remain there. For that reason make sure you always transfer your results back to your local machine. To check you file storage quota you can use: `pan_quota` and it shows the result in bytes.
 
-We use `scp`, which stands for `secure copy protocol`, and we always do this from within our local machine
 
-* copy from local to remote:
+We use `scp`, which stands for `secure copy protocol`, and we always do this from our local machine.
+
+* copy from local to remote home directory:
 `scp data.r ky19161@bluecrystalp3.acrc.bris.ac.uk:~`
 
-* copy from remote to local:
+* copy from remote to local current directory:
 `scp ky19161@bluecrystalp3.acrc.bris.ac.uk:data.r .`
-
-To check you file storage quota you can use: `pan_quota` and it shows the result in bytes.
 
 **Advice for file usage**: using a few larger files helps the job run faster than many small ones. This is because locating files on the cluster takes quite a bit of time.
 
 ## Environment Modules
 
-BlueCrystal has an environment modules package which enables one to customize their environment. What is perhaps the most important is that you must always make sure that the module is loaded. The main commands to do this are:
+BlueCrystal has an environment modules package which enables one to customize their environment. What is perhaps the most important is that you must always make sure that the required modules are loaded. The main commands to do this are:
 
 * `module avail`: list available modules
 * `module list`: list loaded modules
@@ -59,7 +58,7 @@ BlueCrystal has an environment modules package which enables one to customize th
 * `module del`: remove module
 * `module whatis`: details about the module
 
-It is recommended that you include the required modules in your shell startup file `.bashrc`. However, make sure you know what you are doing beforehand and don't modify anything else.
+It is recommended that you include the required modules in your shell startup file `.bashrc`. However, make sure you know what you are doing beforehand and don't modify anything else just yet.
 
 For example, if you want to use `R` and `Python` your `.bashrc` should inclue
 ```{bash eval=FALSE}
@@ -69,10 +68,10 @@ module add languages/python-3.3.2
 
 ## How to run a job
 
-1. Include the required modules in your `.bashrc`
-2. Compile code if needed
+1. Include the required modules in your `.bashrc`.
+2. Compile code if needed.
 3. Copy scripts or data to the cluster.
-4. Create job submission script
+4. Create job submission script.
 5. Submit job script to queuing system.
 
 #### Queuing system
@@ -108,7 +107,7 @@ To submit the job, simply type:
 
 ## Example
 
-We have the following script that we want to run.
+We have the following script that we want to run. This is a similar script to the one in the Linux portfolio. It takes the specified text files and returns the top most common words in different files, except for the specified stop words (for, at, a etc).
 ```{bash eval=FALSE}
 #!/bin/bash
 
@@ -124,7 +123,6 @@ do
 done
 ```
 
-This is a similar script to the one in the Linux portfolio. It takes the specified text files and returns the top most common words in different files, except for the specified stop words (for, at, a etc).
 
 To run this, we need to upload it to the remote directory together with the stop words file and the text files.
 ![](/post/2020-06-17-intro-to-hpc_files/scp.png)
@@ -155,6 +153,7 @@ echo Working Directory: `pwd`
 
 # Execute code 
 $EXE
+time most_used_words.sh 
 ```
 
 We submit the job, and check its status. The status can be seen under the `S` column as `Q` for Queued, `R` for Running and `C` for Completed. Once the job finishes we obtain the new files that contain the top word counts and two additional files.
@@ -163,7 +162,7 @@ We submit the job, and check its status. The status can be seen under the `S` co
 The `.e` file contains the running time in this case. But it can contain errors.
 ![](/post/2020-06-17-intro-to-hpc_files/efile.png)
 
-The `.o` file has the outputs that we have printed as part of out submission script (workind directory and node) and the actual code (input and output file names).
+The `.o` file has the outputs that we have printed as part of our submission script (workind directory and node) and the actual code (input and output file names).
 ![](/post/2020-06-17-intro-to-hpc_files/ofile.png)
 
 While we have only examined how to submit a serial job, the HPC facilities are perhaps even more usefull for parallel jobs. 

@@ -42,7 +42,7 @@ if __name__ == &quot;__main__&quot;:
     print(f&quot;The number of total primes between 1 and 20 is: {total_primes}&quot;)</code></pre>
 <ul>
 <li>by default <code>Pool() as pool</code> uses the total available cores, but we can control this using <code>processes=</code> as seen above.</li>
-<li><code>current_process().pid</code> returns the worker is. Note that there are indeed <code>5</code> different workers performing the tasks.</li>
+<li><code>current_process().pid</code> returns the worker id. Note that there are indeed <code>5</code> different workers performing the tasks.</li>
 <li><code>pool.map(is_prime,nums)</code> applies the <code>is_prime</code> function to all the specified values by splitting the task across the given cores.</li>
 <li><code>reduce(lambda x, y: x+y, are_primes)</code> sums up all the values from the result by aggregating them one at a time.</li>
 </ul>
@@ -50,8 +50,8 @@ if __name__ == &quot;__main__&quot;:
 </div>
 <div id="pool-mapreduce-for-functions-with-multiple-arguments" class="section level3">
 <h3>Pool map/reduce for functions with multiple arguments</h3>
-<p>If we want to map a function with multiple arguments we can use <code>Pool.starmap</code> instead. It takes as as input a list of tuples, and applies the specified function to the elements of every individual tuple.</p>
-<p>Let’s now create a function that finds the number of primes between two integers. Then we use <code>Pool.startmap</code> to apply this function to the pairs of specified starting and end values. To do so we have used the <code>zip</code> function to combine the two lists into pairs.</p>
+<p>If we want to map a function with multiple arguments we can use <code>Pool.starmap</code> instead. It takes as input a list of tuples, and applies the specified function to the elements of every individual tuple.</p>
+<p>Let’s now create a function that finds the number of primes between two integers. Then we use <code>Pool.starmap</code> to apply this function to the pairs of specified starting and end values. To do so we have used the <code>zip</code> function to combine the two lists into pairs.</p>
 <pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process
 from functools import reduce
 
@@ -89,10 +89,10 @@ if __name__ == &quot;__main__&quot;:
 </div>
 <div id="asynchronous-functions-and-futures" class="section level3">
 <h3>Asynchronous Functions and Futures</h3>
-<p>We are interested using the workers for different functions. There are two main options:</p>
+<p>We are interested in using the workers for processing different functions. There are two main options:</p>
 <ul>
-<li><code>pool.apply</code>: run function in a separate process, but wait for the current process to finish first; only then does the master get unlocked</li>
-<li><code>pool.apply_async</code>: workers perform different function calls and unblock master as soon as they finish.</li>
+<li><code>pool.apply</code>: runs function in a separate process, but waits for the current process to finish first; only then does the master get unlocked.</li>
+<li><code>pool.apply_async</code>: workers perform different function calls and keep master unlocked.</li>
 </ul>
 <p>An example of this would be</p>
 <pre class="python"><code>from multiprocessing import cpu_count, Pool, current_process

@@ -168,6 +168,15 @@ print(triangle.side_lengths)</code></pre>
 </div>
 <div id="implementation-of-gaussian-processes" class="section level2">
 <h2>Implementation of Gaussian Processes</h2>
+<p>A Gaussian Process is a distribution over functions <span class="math inline">\(f(x)\)</span> defined by a mean function <span class="math inline">\(m(x)\)</span> and a covariance function <span class="math inline">\(k(x,x&#39;)\)</span> and it can be written as follows:</p>
+<p><span class="math display">\[f(x) \sim GP(m(x), k(x,x&#39;).\]</span></p>
+<p>An important property of Gaussian Processes is that for a finite subset <span class="math inline">\(X=(x_1,\cdots, x_n)\)</span>, the marginal is normally distributed</p>
+<p><span class="math display">\[f(X)\sim \mathcal{N}(m(x),\Sigma),\]</span></p>
+<p>where <span class="math inline">\(\Sigma=k(X,X)\)</span>.</p>
+<div id="covariance-function" class="section level3">
+<h3>Covariance function</h3>
+<p>To obtain this covariance we need to specify a kernel function to be used, in our case this will be an RBF kernel:</p>
+<p><span class="math display">\[k(x,x&#39;)=\sigma^2\exp(-0.5\ell ^{1/2}\parallel x-x&#39;\parallel^2).\]</span></p>
 <p>We first create a Kernel class that enables us to define the parameters to be used in the Gaussian kernel. The class also has a method to compute the covariance matrix based on the inputed vectors.</p>
 <pre class="python"><code>import numpy as np
 import matplotlib.pyplot as plt
@@ -225,6 +234,17 @@ test_kernel.covariance()</code></pre>
 plt.imshow(test_kernel.covariance())
 plt.show()</code></pre>
 <p><img src="/post/2020-06-17-python_files/kernel.png" /></p>
+</div>
+<div id="sampling-from-prior" class="section level3">
+<h3>Sampling from prior</h3>
+<p>Since we cannot evaluate the function using an infinite number of points, we sample a finite subset of Gaussian Processes <span class="math inline">\(y\sim f(X)\)</span> as follows:</p>
+<p><span class="math display">\[y\sim \mathcal{N}(0,k(X,X)),\]</span>
+where <span class="math inline">\(X\)</span> is a finite subset.</p>
+</div>
+<div id="predictions" class="section level3">
+<h3>Predictions</h3>
+<p>Given that we now have some new observations <span class="math inline">\(y_1, X_1\)</span>, we can update our posterior and make predictions for <span class="math inline">\(y_2|X_2\)</span> using</p>
+<p><span class="math display">\[p(y_2|y_1,X_1,X_2)=\mathcal{N}(\Sigma_{21}\Sigma_{11}^{-1}y_1,\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12})\]</span></p>
 <p>The second class that we use is a Gaussian Process class. The way the class works is that we can initialize an initial <code>gp</code> object with a given kernel and the test x values, and then we can update it once we have some training values.</p>
 <pre class="python"><code>class Gp:
     &quot;&quot;&quot;
@@ -304,6 +324,7 @@ y_train = [-0.5, 1, 0]
 gp.train(x_train, y_train)
 gp.plot</code></pre>
 <p><img src="/post/2020-06-17-python_files/posterior.png" /></p>
+</div>
 </div>
 
     

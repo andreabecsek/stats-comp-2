@@ -16,8 +16,7 @@
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/deep-learning/</guid>
-      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the structure connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons.
-The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
+      <description>Introduction to Neural Networks Neural Networks are learning algorithms inspired by the connectivity of real-life neurons, since they seem to be doing a pretty good job. The key idea is that we have various layers of inter-connected neurons. The inputs that we have form the first layer, and the aim is to obtain an output. However, between these two layers, there are numerous hidden layers that communicate with each other.</description>
     </item>
     
     <item>
@@ -27,8 +26,8 @@ The inputs that we have form the first layer, and the aim is to obtain an output
       
       <guid>/post/intro-to-hpc/</guid>
       <description>High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.
-Logging in Setting VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
-Go to https://uobnet2.bristol.ac.uk and sign in.</description>
+Logging in Setting up VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
+Go to https://uobnet2.</description>
     </item>
     
     <item>
@@ -37,8 +36,7 @@ Go to https://uobnet2.bristol.ac.uk and sign in.</description>
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/introduction-to-openmp/</guid>
-      <description>OpenMP is an interface that provides support for parallel programming.
-The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
+      <description>OpenMP is an interface that provides support for parallel programming. The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.
 We wrote the hello.cpp code and compiled it.
 #include &amp;lt;iostream&amp;gt; int main() { #pragma omp parallel { std::cout &amp;lt;&amp;lt; &amp;quot;Hello from OpenMP!\n&amp;quot;; } return 0; }  Note that we included a single new line, #pragma omp parallel which simply mentions that the code between the brackets is what we aim to parallelize.</description>
     </item>
@@ -60,8 +58,8 @@ print(multiprocessing.cpu_count()) Before we even start writing our script, we m
       <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
       
       <guid>/post/parallel-rcpp/</guid>
-      <description>Rcpp Parallel library(Rcpp) library(microbenchmark) Consider a simple scenario. We want to flip \(100\) coins and get the results. We can do this in R, in what is an already optimized way.
-rbinom(100, 1, 0.5) ## [1] 0 1 0 0 0 1 1 0 1 1 1 0 0 1 0 0 1 0 0 0 0 0 0 0 1 1 1 0 0 0 1 0 0 1 0 0 1 ## [38] 0 0 1 0 0 0 0 1 0 1 1 0 1 0 1 0 1 1 0 0 1 1 0 1 0 1 0 0 0 0 1 1 0 0 0 0 1 ## [75] 0 1 0 1 0 1 0 1 0 1 1 0 0 1 0 1 0 1 0 0 1 0 0 0 1 0 Or we can do this using</description>
+      <description>Rcpp Parallel Consider a simple scenario. We want to flip \(100\) coins and get the results. We can do this in R, in what is an already optimized way.
+rbinom(100, 1, 0.5) ## [1] 1 1 0 1 0 1 0 0 1 0 0 0 1 0 1 1 0 1 1 0 0 1 1 0 1 0 0 0 1 0 0 1 1 0 1 0 1 ## [38] 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 1 0 0 0 1 1 0 0 0 1 1 1 0 0 0 0 1 1 1 0 0 0 ## [75] 1 0 1 1 0 0 0 1 1 1 0 0 1 1 0 0 0 0 0 1 0 0 1 1 1 0 Or we can do this using</description>
     </item>
     
     <item>

@@ -17,8 +17,8 @@
       
       <guid>/post/intro-to-hpc/</guid>
       <description>High performance computing is a way to process data much faster than a single computer possibly could. This is achieved by parallelizing code across a cluster of computer and nodes.
-Logging in Setting VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
-Go to https://uobnet2.bristol.ac.uk and sign in.</description>
+Logging in Setting up VPN (if not on university premises) If you are not on university premises you will have to set up the University VPN. Setting up a connection on Linux can be done as follows:
+Go to https://uobnet2.</description>
     </item>
     
     <item>

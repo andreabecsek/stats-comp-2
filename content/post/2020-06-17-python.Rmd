@@ -60,6 +60,22 @@ Another important role of methods is that it enables one to update the state of 
 
 ## Implementation of Gaussian Processes
 
+A Gaussian Process is a distribution over functions $f(x)$ defined by a mean function $m(x)$ and a covariance function $k(x,x')$ and it can be written as follows:
+
+$$f(x) \sim GP(m(x), k(x,x').$$
+
+An important property of Gaussian Processes is that for a finite subset $X=(x_1,\cdots, x_n)$, the marginal is normally distributed
+
+$$f(X)\sim \mathcal{N}(m(x),\Sigma),$$
+
+where $\Sigma=k(X,X)$.
+
+### Covariance function
+
+To obtain this covariance we need to specify a kernel function to be used, in our case this will be an RBF kernel:
+
+$$k(x,x')=\sigma^2\exp(-0.5\ell ^{1/2}\parallel x-x'\parallel^2).$$
+
 We first create a Kernel class that enables us to define the parameters to be used in the Gaussian kernel. The class also has a method to compute the covariance matrix based on the inputed vectors.
 ```{python eval=FALSE}
 import numpy as np
@@ -126,6 +142,19 @@ plt.show()
 ```
 
 ![](/post/2020-06-17-python_files/kernel.png)
+
+### Sampling from prior
+
+Since we cannot evaluate the function using an infinite number of points, we sample a finite subset of Gaussian Processes $y\sim f(X)$ as follows:
+
+$$y\sim \mathcal{N}(0,k(X,X)),$$
+where $X$ is a finite subset.
+
+### Predictions
+
+Given that we now have some new observations $y_1, X_1$, we can update our posterior and make predictions for $y_2|X_2$ using
+
+$$p(y_2|y_1,X_1,X_2)=\mathcal{N}(\Sigma_{21}\Sigma_{11}^{-1}y_1,\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12})$$
 
 The second class that we use is a Gaussian Process class. The way the class works is that we can initialize an initial `gp` object with a given kernel and the test x values, and then we can update it once we have some training values.
 ```{python eval=FALSE}

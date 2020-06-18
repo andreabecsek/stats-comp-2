@@ -132,8 +132,7 @@
     
 
 
-<p>OpenMP is an interface that provides support for parallel programming.</p>
-<p>The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.</p>
+<p>OpenMP is an interface that provides support for parallel programming. The easiest thing we can do is create a simple C++ code, compile it and run it multiple times in parallel.</p>
 <p>We wrote the <code>hello.cpp</code> code and compiled it.</p>
 <pre class="cpp"><code>#include &lt;iostream&gt;
 
@@ -146,13 +145,12 @@ int main()
 
         return 0;
 }  </code></pre>
-<p>Note that we included a single new line, <code>#pragma omp parallel</code> which simply mentions that the code between the brackets is what we aim to parallelize.</p>
-<p>And we compile the program using</p>
+<p>Note that we included a single new line, <code>#pragma omp parallel</code> which simply mentions that the code between the brackets is what we aim to parallelize. We compile the program using</p>
 <pre class="bash"><code>g++ -fopenmp hello_openmp.cpp -o hello_openm</code></pre>
 <p>Now, we set the number of threads to <span class="math inline">\(3\)</span> using the <code>OMP_NUM_THREADS</code> variable and execute the file. The code has indeed been run <span class="math inline">\(3\)</span> times.
 <img src="/post/2020-06-17-introduction-to-openmp_files/hellomp.png" /></p>
-<div id="directives" class="section level3">
-<h3>Directives</h3>
+<p>We are now going to examine a few of these types of directives.
+### Directives</p>
 <p>In general code is executed one line at a time, beginning with the main function. While usually there is a single main thread, what the <code>#pragma</code> commands do is split the given code into multiple threads. Then each thread executes the specified code in parallel.</p>
 <p>The OpenMP library provides the two functions used to identify threads:</p>
 <ul>
@@ -241,7 +239,7 @@ int main(){
 </div>
 <div id="reductions" class="section level4">
 <h4>Reductions</h4>
-<p>Reductions combine multiple subcalculations into one after every calculations. This way we don’t have to store all the results until the end.</p>
+<p>Reductions combine multiple subcalculations into one after every calculation. This way we don’t have to store all the results until the end.</p>
 <p>Let’s estimate the mean of <span class="math inline">\(100\)</span> coin flips.</p>
 <pre class="cpp"><code>#include &lt;iostream&gt;
 
@@ -277,7 +275,6 @@ int main(){
                 std::cout &lt;&lt; &quot;Estimated mean of 100 coin flips is: &quot; &lt;&lt; count/double(100) &lt;&lt;&quot;\n&quot;;
         return 0;
 }</code></pre>
-</div>
 </div>
 
     

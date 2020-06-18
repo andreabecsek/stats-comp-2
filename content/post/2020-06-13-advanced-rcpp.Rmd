@@ -54,7 +54,7 @@ fit <- lm(logprod ~tod+I(tod^2)+toy+I(toy^2), data=solar)
 lm_r <- fit$coefficients
 ```
 
-Fit the same model using `Rcpp`. First set the model matrix and output variable is
+Fit the same model using `Rcpp`. First set the model matrix and output variable 
 ```{r}
 X <- with(solar,cbind(1,tod,tod^2,toy,toy^2))
 y <- solar$logprod

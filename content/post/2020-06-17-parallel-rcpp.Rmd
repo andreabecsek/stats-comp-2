@@ -8,7 +8,7 @@ tags: []
 ---
 
 ## Rcpp Parallel
-```{r}
+```{r echo=FALSE}
 library(Rcpp)
 library(microbenchmark)
 ```
@@ -27,7 +27,7 @@ Or we can do this using
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//[[Rcpp::export(mean_flips)]]
+//[[Rcpp::export(flips)]]
 NumericVector coin()
 {
   NumericVector out(100);
@@ -105,13 +105,13 @@ microbenchmark(rbinom(100, 1, 0.5),
                unit = 'relative')
 ```
 
-To understand more exactly what parallelization involves, let's take a look at the actual function that is used. Note how it takes the beginning and end of a for loop, the worker and the number of minimum number of iterations to be performed by a thread.
-```{Rcpp eval=FALSE}
-void parallelFor(std::size_t begin,
-                 std::size_t end, 
-                 Worker& worker,
-                 std::size_t grainSize = 1)
-```
+<!-- To understand more exactly what parallelization involves, let's take a look at the actual function that is used. Note how it takes the beginning and end of a for loop, the worker and the number of minimum number of iterations to be performed by a thread. -->
+<!-- ```{Rcpp eval=FALSE} -->
+<!-- void parallelFor(std::size_t begin, -->
+<!--                  std::size_t end,  -->
+<!--                  Worker& worker, -->
+<!--                  std::size_t grainSize = 1) -->
+<!-- ``` -->
 
 <!-- ## Reductions -->
 

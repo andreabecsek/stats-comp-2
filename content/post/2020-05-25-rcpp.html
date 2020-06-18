@@ -99,10 +99,10 @@ muSmoothSmallRcpp &lt;- meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.02)</code>
 <pre><code>## Unit: relative
 ##                                               expr      min       lq     mean
 ##  meanKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
-##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.512946 1.524154 1.525489
+##      meanKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.511881 1.502397 1.528621
 ##    median       uq      max neval cld
 ##  1.000000 1.000000 1.000000   100  a 
-##  1.520617 1.536626 1.048042   100   b</code></pre>
+##  1.533397 1.592908 1.422347   100   b</code></pre>
 </div>
 <div id="q1b" class="section level3">
 <h3>Q1b</h3>
@@ -358,10 +358,10 @@ NumericVector varKRS_cpp(const NumericVector y, const NumericVector x, const Num
 <pre class="r"><code>microbenchmark(varKRS(y = y, x = x, x0 = x_new, lam = 0.06), varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06), unit = &quot;relative&quot;)</code></pre>
 <pre><code>## Unit: relative
 ##                                              expr      min       lq     mean
-##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.508201 1.515028 1.575248
+##      varKRS(y = y, x = x, x0 = x_new, lam = 0.06) 1.519337 1.553206 1.606396
 ##  varKRS_cpp(y = y, x = x, x0 = x_new, lam = 0.06) 1.000000 1.000000 1.000000
 ##    median       uq      max neval cld
-##  1.529235 1.605527 5.698085   100   b
+##  1.536965 1.579841 5.693222   100   b
 ##  1.000000 1.000000 1.000000   100  a</code></pre>
 <p>Perform cross validation using <code>R</code></p>
 <pre class="r"><code>cv_error_var &lt;- function(y, x, lambdas, k = 10) {
@@ -547,7 +547,7 @@ rcpp_hello_world &lt;- function() {
 <p>One might think that it is a good idea to call the <code>C++</code> functions from an <code>R</code> package via <code>.Call</code> is not encouraged. We want to get the functions communicating via <code>C++</code>. The <code>Rcpp::interfaces(cpp)</code> command is essentially used to export a <code>C++</code> function from the package as follows:</p>
 <pre class="cpp"><code>#include &lt;Rcpp.h&gt;
 
-// [[Rcpp::interfaces(cpp)]]
+// [[Rcpp::interfaces(R, cpp)]]
 
 using namespace Rcpp;
 
@@ -613,14 +613,75 @@ system(&quot;R CMD INSTALL akrscv_1.0.tar.gz&quot;)</code></pre>
 <ol style="list-style-type: decimal">
 <li>Install package from github using</li>
 </ol>
-<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrs&quot;)</code></pre>
-<pre><code>## Skipping install of &#39;akrs&#39; from a github remote, the SHA1 (47e8eccb) has not changed since last install.
-##   Use `force = TRUE` to force installation</code></pre>
-<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrscv&quot;)</code></pre>
-<pre><code>## Skipping install of &#39;akrscv&#39; from a github remote, the SHA1 (b38b9729) has not changed since last install.
-##   Use `force = TRUE` to force installation</code></pre>
-<p>Use the package functions and</p>
-<pre class="r"><code>akrs::varKRS_cpp(y,x,x_new,0.2)
-akrscv::cv_meanKRS_cpp(y,x,lambdas=seq(0.1,1, by=0.01),10)</code></pre>
+<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrs&quot;, force=TRUE)</code></pre>
+<pre><code>## 
+##   
+   checking for file ‘/tmp/Rtmp9AFSh9/remotes5d24d2b0184/andreabecsek-akrs-47e8ecc/DESCRIPTION’ ...
+  
+✔  checking for file ‘/tmp/Rtmp9AFSh9/remotes5d24d2b0184/andreabecsek-akrs-47e8ecc/DESCRIPTION’
+## 
+  
+─  preparing ‘akrs’:
+## 
+  
+   checking DESCRIPTION meta-information ...
+  
+✔  checking DESCRIPTION meta-information
+## 
+  
+─  cleaning src
+## 
+  
+─  checking for LF line-endings in source and make files and shell scripts
+## 
+  
+─  checking for empty or unneeded directories
+## 
+  
+─  building ‘akrs_1.0.tar.gz’
+## 
+  
+   
+## </code></pre>
+<pre class="r"><code>devtools::install_github(&quot;andreabecsek/akrscv&quot;, force=TRUE)</code></pre>
+<pre><code>## 
+##   
+   checking for file ‘/tmp/Rtmp9AFSh9/remotes5d243dee5f93/andreabecsek-akrscv-b38b972/DESCRIPTION’ ...
+  
+✔  checking for file ‘/tmp/Rtmp9AFSh9/remotes5d243dee5f93/andreabecsek-akrscv-b38b972/DESCRIPTION’
+## 
+  
+─  preparing ‘akrscv’:
+## 
+  
+   checking DESCRIPTION meta-information ...
+  
+✔  checking DESCRIPTION meta-information
+## 
+  
+─  cleaning src
+## 
+  
+─  checking for LF line-endings in source and make files and shell scripts
+## 
+  
+─  checking for empty or unneeded directories
+## ─  building ‘akrscv_1.0.tar.gz’
+## 
+  
+   
+## </code></pre>
+<p>Use the package functions to check whether they give the right results</p>
+<pre class="r"><code>R_result &lt;- meanKRS(y = y, x = x, x0 = x_new, lam = 0.06)
+package_result &lt;- akrs::meanKRS_cpp(y,x,x_new,0.06)
+mean(abs(R_result-package_result))</code></pre>
+<pre><code>## [1] 1.930133e-16</code></pre>
+<p>Check <code>akrscv</code> package. Note that the results given by the two methods are no longer similar to machine precision, this is because cross-validation multiple probabilitic choices, so we cannot expect the same results.</p>
+<pre class="r"><code>lambdas &lt;- seq(0.001, 0.025, length.out = 50)
+R_cv_result &lt;- cv_error(y, x, lambdas, 10)
+package_cv_result &lt;- akrscv::cv_meanKRS_cpp(y,x,lambdas, 10)
+mean(abs(R_cv_result-package_cv_result))</code></pre>
+<pre><code>## [1] 0.0005505907</code></pre>
+<p>Both packages seem to be working fine and to be giving the correct results.</p>
 </div>
 </div>

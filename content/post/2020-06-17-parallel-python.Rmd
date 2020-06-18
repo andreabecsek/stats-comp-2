@@ -8,7 +8,7 @@ tags:
   - python
   - parallel
 ---
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, include=FALSE}
 knitr::opts_chunk$set(message = FALSE, warning = FALSE, python.reticulate=FALSE)
 ```
 
@@ -50,16 +50,16 @@ if __name__ == "__main__":
 ```
 
 * by default `Pool() as pool` uses the total available cores, but we can control this using `processes=` as seen above. 
-* `current_process().pid` returns the worker is. Note that there are indeed `5` different workers performing the tasks.
+* `current_process().pid` returns the worker id. Note that there are indeed `5` different workers performing the tasks.
 * `pool.map(is_prime,nums)` applies the `is_prime` function to all the specified values by splitting the task across the given cores.
 * `reduce(lambda x, y: x+y, are_primes)` sums up all the values from the result by aggregating them one at a time.
 
 ![](/post/2020-06-17-parallel-python_files/primes.png)
 
 ### Pool map/reduce for functions with multiple arguments
-If we want to map a function with multiple arguments we can use `Pool.starmap` instead. It takes as as input a list of tuples, and applies the specified function to the elements of every individual tuple.
+If we want to map a function with multiple arguments we can use `Pool.starmap` instead. It takes as input a list of tuples, and applies the specified function to the elements of every individual tuple.
 
-Let's now create a function that finds the number of primes between two integers. Then we use `Pool.startmap` to apply this function to the pairs of specified starting and end values. To do so we have used the `zip` function to combine the two lists into pairs.
+Let's now create a function that finds the number of primes between two integers. Then we use `Pool.starmap` to apply this function to the pairs of specified starting and end values. To do so we have used the `zip` function to combine the two lists into pairs.
 ```{python eval=FALSE}
 from multiprocessing import cpu_count, Pool, current_process
 from functools import reduce
@@ -100,10 +100,10 @@ if __name__ == "__main__":
 
 ### Asynchronous Functions and Futures
 
-We are interested using the workers for different functions.  There are two main options:
+We are interested in using the workers for processing different functions. There are two main options:
 
-* `pool.apply`: run function in a separate process, but wait for the current process to finish first; only then does the master get unlocked
-* `pool.apply_async`: workers perform different function calls and unblock master as soon as they finish.
+* `pool.apply`: runs function in a separate process, but waits for the current process to finish first; only then does the master get unlocked.
+* `pool.apply_async`: workers perform different function calls and keep master unlocked.
 
 An example of this would be
 ```{python eval=FALSE}
